@@ -50,10 +50,10 @@ function Navbar(): JSX.Element {
       } ${scrolled ? "bg-black shadow-lg" : "bg-transparent"}`}
     >
       <nav className="text-surface">
-        <div className="max-w-8xl mx-auto flex items-center justify-between px-4 sm:px-6 md:px-12 lg:px-20 py-4 md:py-5 lg:py-2">
+        <div className="max-w-screen mx-auto flex items-center justify-between px-4 sm:px-6 md:px-12 lg:px-20 py-4 md:py-5 lg:py-6">
           <div className="flex items-center gap-2 md:gap-3">
             <img
-              className="w-8 h-8 md:w-10 md:h-10 lg:w-20 lg:h-20"
+              className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12"
               src="/logo.svg"
               alt="A-Tron's Logo"
             />
@@ -62,26 +62,24 @@ function Navbar(): JSX.Element {
             </h1>
           </div>
 
-          {/* Desktop Navigation Links */}
           <div className="hidden lg:flex items-center gap-8 xl:gap-10">
             {navLinks.map((item) => (
               <NavLink
                 key={item.label}
                 to={item.path}
-                className="text-base xl:text-base font-bold transition-colors relative group uppercase"
+                className="text-base font-bold hover:text-accent uppercase transition-colors relative group"
               >
                 {item.label}
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-accent transition-all duration-300 group-hover:w-full"></span>
               </NavLink>
             ))}
           </div>
 
-          {/* Right Section - CTA & Menu */}
           <div className="flex items-center gap-3 md:gap-4 lg:gap-6">
-            <Button className="bg-transparent hidden border-2 border-surface rounded-3xl sm:block">
+            <Button className="hidden sm:block px-6 md:px-5 lg:px-6 py-4 md:py-2.5 border-2 border-accent rounded-3xl">
               Try Demo
             </Button>
 
-            {/* Mobile Menu Button */}
             <button
               className="lg:hidden flex flex-col justify-center gap-1.5 w-7 h-7 cursor-pointer group"
               aria-label="Menu"

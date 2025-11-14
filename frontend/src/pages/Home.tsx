@@ -1,9 +1,10 @@
 import { type JSX } from "react";
+import Hero from "../components/Hero";
 
 function Home(): JSX.Element {
   return (
-    <section className="min-h-screen">
-      <p>Hello</p>
+    <section>
+      <Hero />
     </section>
   );
 }

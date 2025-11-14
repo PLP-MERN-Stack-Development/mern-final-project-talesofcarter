@@ -14,13 +14,13 @@ const Button = ({
   className = "",
   bgColor = "",
   textColor = "text-white",
-  hoverBg = "",
+  hoverBg = "hover:bg-accent",
   hoverText = "",
   ...props
 }: ButtonProps): JSX.Element => {
   return (
     <button
-      className={`px-6 md:px-5 lg:px-6 py-2 md:py-2.5 rounded-3xl font-semibold transition-colors duration-200 cursor-pointer ${bgColor} ${textColor} ${hoverBg} ${hoverText} ${className}`}
+      className={`font-semibold transition-colors duration-200 ease-in-out cursor-pointer ${bgColor} ${textColor} ${hoverBg} ${hoverText} ${className}`}
       {...props}
     >
       {children}
