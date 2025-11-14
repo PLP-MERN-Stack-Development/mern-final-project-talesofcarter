@@ -1,6 +1,7 @@
 import { type JSX, useState, useEffect, useCallback } from "react";
 import Button from "./Button";
 import SplitText from "../animations/SplitText";
+import AOS from "aos";
 
 interface HeroSlide {
   image: string;
@@ -46,6 +47,12 @@ function Hero(): JSX.Element {
     return () => clearInterval(timer);
   }, [handleNext]);
 
+  useEffect(() => {
+    if (!isTransitioning) {
+      AOS.refresh();
+    }
+  }, [isTransitioning]);
+
   const goToSlide = (index: number) => {
     if (!isTransitioning) {
       setIsTransitioning(true);
@@ -74,7 +81,7 @@ function Hero(): JSX.Element {
               backgroundRepeat: "no-repeat",
             }}
           />
-          {/* Dark Overlays */}
+          {/* Overlays */}
           <div className="absolute inset-0 bg-linear-to-r from-pine-green/80 via-black/40 to-transparent" />
           <div className="absolute inset-0 bg-linear-to-l from-pine-green/60 via-transparent to-transparent" />
           <div className="absolute inset-0 bg-pine-green/20" />
@@ -87,9 +94,9 @@ function Hero(): JSX.Element {
           <div className="max-w-2xl">
             {/* Hero Text Content */}
             <div
-              className={`transition-all duration-500 ${
+              className={`transition-all duration-900 ${
                 isTransitioning
-                  ? "opacity-0 translate-y-4"
+                  ? "opacity-0 translate-y-8"
                   : "opacity-100 translate-y-0"
               }`}
             >
