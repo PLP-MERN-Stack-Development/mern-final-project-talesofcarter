@@ -93,25 +93,37 @@ function Hero(): JSX.Element {
                   : "opacity-100 translate-y-0"
               }`}
             >
-              <p className="text-accent font-semibold text-sm md:text-base lg:text-lg mb-3 md:mb-4 uppercase tracking-wider">
+              <p
+                data-aos="fade-up"
+                data-aos-delay="200"
+                className="text-accent font-semibold text-sm md:text-base lg:text-lg mb-3 md:mb-4 uppercase"
+              >
                 {slides[currentSlide].subtitle}
               </p>
-              <SplitText
-                text={slides[currentSlide].title}
-                className="text-3xl md:text-4xl lg:text-5xl font-bold text-surface mb-4 md:mb-6 leading-tight uppercase"
-                splitType="chars"
-                duration={0.6}
-                delay={30}
-                ease="power3.out"
-                tag="h1"
-              />
-              {/*<h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-surface mb-4 md:mb-6 leading-tight uppercase">
-                {slides[currentSlide].title}
-              </h1> */}
-              <p className="text-lg text-surface/80 mb-8 md:mb-10 leading-relaxed max-w-lg">
+              <div data-aos="fade-up" data-aos-delay="300">
+                <SplitText
+                  text={slides[currentSlide].title}
+                  className="text-3xl md:text-4xl lg:text-5xl font-bold text-surface mb-4 md:mb-6 leading-tight uppercase"
+                  splitType="chars"
+                  duration={0.6}
+                  delay={30}
+                  ease="power3.out"
+                  tag="h1"
+                />
+              </div>
+
+              <p
+                data-aos="fade-up"
+                data-aos-delay="300"
+                className="text-lg text-surface/80 mb-8 md:mb-10 leading-relaxed max-w-lg"
+              >
                 {slides[currentSlide].description}
               </p>
-              <div className="flex flex-col sm:flex-row gap-4">
+              <div
+                data-aos="fade-up"
+                data-aos-delay="400"
+                className="flex flex-col sm:flex-row gap-4"
+              >
                 <Button className="px-8 py-4 bg-accent hover:bg-transparent border-2 border-transparent hover:border-accent text-white hover:text-accent rounded-full">
                   Get Started
                 </Button>
@@ -130,9 +142,9 @@ function Hero(): JSX.Element {
           <button
             key={index}
             onClick={() => goToSlide(index)}
-            className={`transition-all duration-300 rounded-full ${
+            className={`transition-all duration-300 rounded-full cursor-pointer ${
               index === currentSlide
-                ? "w-10 md:w-12 h-2 md:h-2.5 bg-white"
+                ? "w-5 md:w-5 h-2 md:h-2.5 bg-accent"
                 : "w-2 md:w-2.5 h-2 md:h-2.5 bg-white/50 hover:bg-white/75"
             }`}
             aria-label={`Go to slide ${index + 1}`}
