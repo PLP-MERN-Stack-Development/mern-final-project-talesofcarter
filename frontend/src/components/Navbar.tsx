@@ -47,7 +47,7 @@ function Navbar(): JSX.Element {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         hidden ? "-translate-y-full" : "translate-y-0"
-      } ${scrolled ? "bg-black shadow-lg" : "bg-transparent"}`}
+      } ${scrolled ? "bg-pine-green shadow-lg" : "bg-transparent"}`}
     >
       <nav className="text-surface">
         <div className="max-w-screen mx-auto flex items-center justify-between px-4 sm:px-6 md:px-12 lg:px-20 py-4 md:py-5 lg:py-6">
