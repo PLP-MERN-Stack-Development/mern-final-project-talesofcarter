@@ -1,10 +1,11 @@
-# MERN Stack Capstone Project
+# Avron
 
 This assignment focuses on designing, developing, and deploying a comprehensive full-stack MERN application that showcases all the skills you've learned throughout the course.
 
 ## Assignment Overview
 
 You will:
+
 1. Plan and design a full-stack MERN application
 2. Develop a robust backend with MongoDB, Express.js, and Node.js
 3. Create an interactive frontend with React.js
@@ -49,4 +50,4 @@ Your project will be automatically submitted when you push to your GitHub Classr
 - [Express.js Documentation](https://expressjs.com/)
 - [React Documentation](https://react.dev/)
 - [Node.js Documentation](https://nodejs.org/en/docs/)
-- [GitHub Classroom Guide](https://docs.github.com/en/education/manage-coursework-with-github-classroom) 
+- [GitHub Classroom Guide](https://docs.github.com/en/education/manage-coursework-with-github-classroom)

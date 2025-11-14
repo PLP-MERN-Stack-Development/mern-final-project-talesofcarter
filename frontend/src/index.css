@@ -1,1 +1,13 @@
 @import "tailwindcss";
+
+body {
+  font-family: "Manrope", sans-serif;
+  background-color: black;
+}
+
+@theme {
+  --color-accent: #99f36c;
+  --color-pine-green: #25494a;
+  --color-strawberry-red: #dc3545;
+  --color-surface: #ffffff;
+}
