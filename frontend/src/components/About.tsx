@@ -1,5 +1,6 @@
 import { type JSX } from "react";
 import CountUp from "../animations/CountUp";
+import { layoutStyles } from "../utils/globalStyles";
 
 interface StatsDataType {
   from: 0;
@@ -15,8 +16,6 @@ function About(): JSX.Element {
     { from: 0, value: 95, label: "Data Accuracy", unit: "%" },
   ];
 
-  const layoutStyles =
-    "max-w-screen mx-auto px-4 sm:px-6 md:px-12 lg:px-20 w-full";
   return (
     <div className="w-full overflow-hidden">
       <div
