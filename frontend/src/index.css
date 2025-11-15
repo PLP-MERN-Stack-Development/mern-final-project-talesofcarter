@@ -10,3 +10,14 @@ body {
   --color-strawberry-red: #dc3545;
   --color-surface: #ffffff;
 }
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

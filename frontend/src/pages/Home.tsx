@@ -3,6 +3,7 @@ import Hero from "../components/Hero";
 import About from "../components/About";
 import Features from "../components/Features";
 import Pricing from "../components/Pricing";
+import FAQs from "../components/FAQs";
 
 function Home(): JSX.Element {
   return (
@@ -11,6 +12,7 @@ function Home(): JSX.Element {
       <About />
       <Features />
       <Pricing />
+      <FAQs />
     </section>
   );
 }

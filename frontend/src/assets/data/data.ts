@@ -21,6 +21,11 @@ interface PlansDataType {
   featuresPack: string[];
 }
 
+interface QueriesType {
+  query: string;
+  answer: string;
+}
+
 export const featuresData: FeaturesType[] = [
   {
     title: "Smart Routing",
@@ -64,7 +69,7 @@ export const plansData: PlansDataType[] = [
   {
     planCategory: "Starter",
     idealFor: "Ideal for startups",
-    planPrice: 49,
+    planPrice: 0,
     featuresPack: [
       "CSV and Excel data import",
       "Basic CO₂ impact analytics",
@@ -108,5 +113,33 @@ export const plansData: PlansDataType[] = [
       "Dedicated AI optimization engine",
       "White-label reporting suite",
     ],
+  },
+];
+
+export const queriesData: QueriesType[] = [
+  {
+    query: "What does ProQure analyze?",
+    answer:
+      "ProQure analyzes procurement data to measure sustainability, CO₂ impact, supplier diversity, and risk indicators.",
+  },
+  {
+    query: "Can I import my existing procurement data?",
+    answer:
+      "Yes, ProQure allows CSV, Excel, and automated data imports from your internal systems.",
+  },
+  {
+    query: "How does the AI generate recommendations?",
+    answer:
+      "Our AI engine compares your suppliers against sustainability benchmarks to suggest greener and cost-efficient alternatives.",
+  },
+  {
+    query: "Can we export sustainability reports?",
+    answer:
+      "Absolutely. You can export reports in PDF, Excel, and dashboard snapshots for audits or presentations.",
+  },
+  {
+    query: "Is ProQure suitable for small teams?",
+    answer:
+      "Yes, ProQure is designed for teams of all sizes, from startups to enterprise procurement departments.",
   },
 ];
