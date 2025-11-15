@@ -3,13 +3,14 @@ import { type JSX } from "react";
 interface StatsDataType {
   value: number;
   label: string;
+  unit?: string;
 }
 
 function About(): JSX.Element {
   const statsData: StatsDataType[] = [
-    { value: 50, label: "Suppliers Assessed" },
-    { value: 120, label: "Carbon Impact Reduced" },
-    { value: 95, label: "Data Accuracy" },
+    { value: 50, label: "Suppliers Assessed", unit: "K+" },
+    { value: 120, label: "Carbon Impact Reduced", unit: "K+" },
+    { value: 95, label: "Data Accuracy", unit: "%" },
   ];
 
   const layoutStyles =
@@ -31,17 +32,30 @@ function About(): JSX.Element {
               lower environmental impact, and make your supply chain responsible
               and efficient!
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mt-8">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 mt-3">
               {statsData.map((entry) => {
                 return (
-                  <div key={entry.label}>
-                    <div className="flex items-center text-2xl md:text-3xl lg:text-5xl font-medium mb-4">
-                      <h2>{entry.value}</h2>
-                      <span>K+</span>
+                  <div
+                    key={entry.label}
+                    className="group relative bg-white rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-100 hover:border-emerald-200 overflow-hidden"
+                  >
+                    <div className="absolute inset-0 bg-linear-to-br from-pine-green to-accent opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+
+                    <div className="relative z-10">
+                      <div className="flex items-baseline gap-1 mb-3">
+                        <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold bg-linear-to-br text-gray-700 bg-clip-text">
+                          {entry.value}
+                        </h2>
+                        <span className="text-2xl md:text-3xl lg:text-4xl font-semibold text-gray-700">
+                          {entry.unit}
+                        </span>
+                      </div>
+                      <h3 className="text-gray-700 text-sm md:text-base font-medium">
+                        {entry.label}
+                      </h3>
                     </div>
-                    <h3 className="text-gray-700 text-base md:text-lg lg:text-lg">
-                      {entry.label}
-                    </h3>
+
+                    <div className="absolute -bottom-2 -right-2 w-20 h-20 bg-linear-to-br from-pine-green to-accent rounded-full opacity-5 group-hover:opacity-10 transition-opacity duration-300"></div>
                   </div>
                 );
               })}
