@@ -4,6 +4,7 @@ import About from "../components/About";
 import Features from "../components/Features";
 import Pricing from "../components/Pricing";
 import FAQs from "../components/FAQs";
+import CTA from "../components/CTA";
 
 function Home(): JSX.Element {
   return (
@@ -13,6 +14,7 @@ function Home(): JSX.Element {
       <Features />
       <Pricing />
       <FAQs />
+      <CTA />
     </section>
   );
 }
