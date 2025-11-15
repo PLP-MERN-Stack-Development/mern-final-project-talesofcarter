@@ -18,7 +18,7 @@ function About(): JSX.Element {
   const layoutStyles =
     "max-w-screen mx-auto px-4 sm:px-6 md:px-12 lg:px-20 w-full";
   return (
-    <div className="min-h-screen w-full overflow-hidden">
+    <div className="w-full overflow-hidden">
       <div
         className={`${layoutStyles} flex-column lg:flex justify-between py-5 md:py-8 lg:py-12`}
       >

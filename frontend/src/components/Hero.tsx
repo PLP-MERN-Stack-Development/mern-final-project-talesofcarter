@@ -63,7 +63,6 @@ function Hero(): JSX.Element {
 
   return (
     <div className="relative min-h-screen w-full overflow-hidden">
-      {/* Background Images */}
       {slides.map((slide, index) => (
         <div
           key={index}
@@ -88,11 +87,9 @@ function Hero(): JSX.Element {
         </div>
       ))}
 
-      {/* Content Overlay */}
       <div className="relative z-20 min-h-screen flex items-center">
         <div className="max-w-screen mx-auto px-4 sm:px-6 md:px-12 lg:px-20 w-full">
           <div className="max-w-2xl">
-            {/* Hero Text Content */}
             <div
               className={`transition-all duration-900 ${
                 isTransitioning
