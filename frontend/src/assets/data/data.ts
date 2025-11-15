@@ -14,6 +14,13 @@ interface FeaturesType {
   icon: LucideIcon;
 }
 
+interface PlansDataType {
+  planCategory: string;
+  idealFor: string;
+  planPrice: number;
+  featuresPack: string[];
+}
+
 export const featuresData: FeaturesType[] = [
   {
     title: "Smart Routing",
@@ -50,5 +57,56 @@ export const featuresData: FeaturesType[] = [
     description:
       "Give clients a clean interface to view shipment status, invoices, analytics, and documents instantly.",
     icon: LayoutDashboard,
+  },
+];
+
+export const plansData: PlansDataType[] = [
+  {
+    planCategory: "Starter",
+    idealFor: "Ideal for startups",
+    planPrice: 49,
+    featuresPack: [
+      "CSV and Excel data import",
+      "Basic CO₂ impact analytics",
+      "Essential supplier scoring",
+      "Monthly sustainability reports",
+      "Email support",
+    ],
+  },
+  {
+    planCategory: "Growth",
+    idealFor: "Companies scaling procurement analytics",
+    planPrice: 129,
+    featuresPack: [
+      "Automated data imports",
+      "Real-time dashboard metrics",
+      "Supplier diversity insights",
+      "AI suggestions for greener vendors",
+      "Branded report exports",
+    ],
+  },
+  {
+    planCategory: "Pro",
+    idealFor: "Procurement teams needing deeper intelligence",
+    planPrice: 299,
+    featuresPack: [
+      "Full CO₂ and waste analytics",
+      "Advanced risk scoring models",
+      "AI recommendations for alternatives",
+      "Workflow automation alerts",
+      "API access and integrations",
+    ],
+  },
+  {
+    planCategory: "Enterprise",
+    idealFor: "For large companies with complex procurement chains",
+    planPrice: 899,
+    featuresPack: [
+      "Custom sustainability model setup",
+      "End-to-end procurement intelligence",
+      "Unlimited data imports and users",
+      "Dedicated AI optimization engine",
+      "White-label reporting suite",
+    ],
   },
 ];
