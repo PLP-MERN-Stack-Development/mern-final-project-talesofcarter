@@ -27,7 +27,11 @@ function About(): JSX.Element {
         </div>
         <div className="w-full lg:w-3/4">
           <div>
-            <p className="text-lg md:text-xl lg:text-3xl leading-12 font-bold">
+            <p
+              data-aos="fade-left"
+              data-aos-delay="300"
+              className="text-lg md:text-xl lg:text-3xl leading-12 font-bold"
+            >
               Optimize your procurement with AI-powered sustainability
               solutions. We provide real-time insights, greener supplier
               recommendations, and smarter purchasing decisions. Reduce costs,
