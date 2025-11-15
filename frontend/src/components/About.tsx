@@ -1,6 +1,8 @@
 import { type JSX } from "react";
+import CountUp from "../animations/CountUp";
 
 interface StatsDataType {
+  from: 0;
   value: number;
   label: string;
   unit?: string;
@@ -8,9 +10,9 @@ interface StatsDataType {
 
 function About(): JSX.Element {
   const statsData: StatsDataType[] = [
-    { value: 50, label: "Suppliers Assessed", unit: "K+" },
-    { value: 120, label: "Carbon Impact Reduced", unit: "K+" },
-    { value: 95, label: "Data Accuracy", unit: "%" },
+    { from: 0, value: 50, label: "Suppliers Assessed", unit: "K+" },
+    { from: 0, value: 120, label: "Carbon Impact Reduced", unit: "K+" },
+    { from: 0, value: 95, label: "Data Accuracy", unit: "%" },
   ];
 
   const layoutStyles =
@@ -44,7 +46,16 @@ function About(): JSX.Element {
                     <div className="relative z-10">
                       <div className="flex items-baseline gap-1 mb-3">
                         <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold bg-linear-to-br text-gray-700 bg-clip-text">
-                          {entry.value}
+                          {
+                            <CountUp
+                              from={entry.from}
+                              to={entry.value}
+                              separator=","
+                              direction="up"
+                              duration={1}
+                              className="count-up-text"
+                            />
+                          }
                         </h2>
                         <span className="text-2xl md:text-3xl lg:text-4xl font-semibold text-gray-700">
                           {entry.unit}
