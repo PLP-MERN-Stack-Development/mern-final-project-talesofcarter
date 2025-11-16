@@ -11,10 +11,10 @@ function Navbar({ toggleSidebar }: { toggleSidebar: () => void }): JSX.Element {
 
   const navLinks: NavLinksType[] = [
     { label: "Home", path: "/" },
-    { label: "About", path: "/" },
-    { label: "Dashboard", path: "/" },
-    { label: "Contact", path: "/" },
-    { label: "Suppliers", path: "/" },
+    { label: "AI Advisor", path: "/ai" },
+    { label: "Dashboard", path: "/dashboard" },
+    { label: "Reports", path: "/reports" },
+    { label: "Suppliers", path: "/suppliers" },
   ];
 
   useEffect(() => {
@@ -55,7 +55,7 @@ function Navbar({ toggleSidebar }: { toggleSidebar: () => void }): JSX.Element {
             <img
               className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12"
               src="/logo.svg"
-              alt="A-Tron's Logo"
+              alt="ProQure's Logo"
             />
             <h1 className="text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight">
               ProQure

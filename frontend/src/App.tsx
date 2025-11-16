@@ -6,6 +6,10 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Footer from "./components/Footer";
+import BotEngine from "./pages/BotEngine";
+import Dashboard from "./pages/Dashboard";
+import Reports from "./pages/Reports";
+import Suppliers from "./pages/Suppliers";
 
 function App(): JSX.Element {
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
@@ -25,6 +29,10 @@ function App(): JSX.Element {
         <Route index element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/ai" element={<BotEngine />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/reports" element={<Reports />} />
+        <Route path="/suppliers" element={<Suppliers />} />
       </Routes>
       <Footer />
     </main>

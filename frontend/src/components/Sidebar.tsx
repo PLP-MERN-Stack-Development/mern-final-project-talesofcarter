@@ -2,13 +2,14 @@ import { type JSX } from "react";
 import {
   X,
   Home,
-  BarChart3,
-  Package,
+  Bot,
+  LayoutGrid,
   Users,
   FileText,
   ChevronRight,
 } from "lucide-react";
 import { FaStar } from "react-icons/fa";
+import { Link } from "react-router";
 
 function Sidebar({
   isOpen,
@@ -18,11 +19,11 @@ function Sidebar({
   onClose: () => void;
 }): JSX.Element {
   const menuItems = [
-    { icon: Home, label: "Dashboard", href: "#dashboard" },
-    { icon: BarChart3, label: "Analytics", href: "#analytics" },
-    { icon: Package, label: "Suppliers", href: "#suppliers" },
-    { icon: FileText, label: "Reports", href: "#reports" },
-    { icon: Users, label: "Team", href: "#team" },
+    { icon: Home, label: "Home", href: "/" },
+    { icon: Bot, label: "AI Advisor", href: "/ai" },
+    { icon: LayoutGrid, label: "Dashboard", href: "/dashboard" },
+    { icon: FileText, label: "Reports", href: "/reports" },
+    { icon: Users, label: "Suppliers", href: "/suppliers" },
   ];
 
   return (
@@ -70,9 +71,9 @@ function Sidebar({
             {menuItems.map((item, index) => {
               const Icon = item.icon;
               return (
-                <a
+                <Link
                   key={item.label}
-                  href={item.href}
+                  to={item.href}
                   className="group flex items-center justify-between gap-3 px-4 py-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-emerald-500/30 transition-all duration-300"
                   style={{
                     animation: `slideInRight 0.3s ease-out ${
@@ -93,7 +94,7 @@ function Sidebar({
                     className="text-emerald-400/60 group-hover:text-emerald-400 group-hover:translate-x-1 transition-all duration-300"
                     strokeWidth={2.5}
                   />
-                </a>
+                </Link>
               );
             })}
           </nav>

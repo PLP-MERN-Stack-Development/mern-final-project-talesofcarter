@@ -1,18 +1,18 @@
 import { type JSX } from "react";
 import Banner from "../components/Banner";
 
-function Dashboard(): JSX.Element {
+function Suppliers(): JSX.Element {
   return (
     <>
-      <title>Dashboard</title>
+      <title>Suppliers</title>
       <div className="relative min-h-screen w-full overflow-hidden">
         <Banner
-          title="Dashboard"
+          title="Suppliers"
           breadcrumbs={[
-            { label: "Home", href: "/dashboard" },
-            { label: "Dashboard" },
+            { label: "Home", href: "/suppliers" },
+            { label: "Suppliers" },
           ]}
-          backgroundImage="/dashboard.webp"
+          backgroundImage="/ship.webp"
           height="h-96"
         />
       </div>
@@ -20,4 +20,4 @@ function Dashboard(): JSX.Element {
   );
 }
 
-export default Dashboard;
+export default Suppliers;
