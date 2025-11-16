@@ -76,9 +76,11 @@ function Navbar(): JSX.Element {
           </div>
 
           <div className="flex items-center gap-3 md:gap-4 lg:gap-6">
-            <Button className="hidden sm:block px-6 md:px-5 lg:px-6 py-4 md:py-2.5 border-2 border-accent rounded-3xl">
-              Try Demo
-            </Button>
+            <NavLink to="/login">
+              <Button className="hidden sm:block px-6 md:px-5 lg:px-6 py-4 md:py-2.5 border-2 border-accent rounded-3xl">
+                Try Demo
+              </Button>
+            </NavLink>
 
             <button
               className="lg:hidden flex flex-col justify-center gap-1.5 w-7 h-7 cursor-pointer group"
