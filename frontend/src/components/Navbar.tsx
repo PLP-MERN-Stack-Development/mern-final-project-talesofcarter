@@ -4,7 +4,7 @@ import Button from "./Button";
 
 type NavLinksType = { label: string; path: string };
 
-function Navbar(): JSX.Element {
+function Navbar({ toggleSidebar }: { toggleSidebar: () => void }): JSX.Element {
   const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
@@ -83,8 +83,9 @@ function Navbar(): JSX.Element {
             </NavLink>
 
             <button
-              className="lg:hidden flex flex-col justify-center gap-1.5 w-7 h-7 cursor-pointer group"
+              className="flex flex-col justify-center gap-1.5 w-7 h-7 cursor-pointer group"
               aria-label="Menu"
+              onClick={toggleSidebar}
             >
               <span className="block h-0.5 w-full bg-surface rounded transition-all group-hover:w-5"></span>
               <span className="block h-0.5 w-full bg-surface rounded"></span>
