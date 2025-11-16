@@ -19,7 +19,7 @@ function Pricing(): JSX.Element {
             className="inline-flex items-center gap-2 px-4 py-2 bg-pine-green backdrop-blur-sm border border-emerald-500/30 rounded-full mb-6"
           >
             <h3 className="text-sm md:text-base font-semibold text-surface tracking-wide">
-              Why Choose Us
+              Our Plans
             </h3>
           </div>
           <h1
