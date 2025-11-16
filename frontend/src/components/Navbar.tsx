@@ -51,7 +51,7 @@ function Navbar(): JSX.Element {
     >
       <nav className="text-surface">
         <div className="max-w-screen mx-auto flex items-center justify-between px-4 sm:px-6 md:px-12 lg:px-20 py-4 md:py-5 lg:py-6">
-          <div className="flex items-center gap-2 md:gap-3">
+          <NavLink to="/" className="flex items-center gap-2 md:gap-3">
             <img
               className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12"
               src="/logo.svg"
@@ -60,7 +60,7 @@ function Navbar(): JSX.Element {
             <h1 className="text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight">
               ProQure
             </h1>
-          </div>
+          </NavLink>
 
           <div className="hidden lg:flex items-center gap-8 xl:gap-10">
             {navLinks.map((item) => (
