@@ -296,7 +296,7 @@ function Reports(): JSX.Element {
             </div>
 
             {/* Generate Report Button */}
-            <button className="flex items-center gap-2 px-6 py-3 bg-linear-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white text-sm font-semibold rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-green-500/30">
+            <button className="flex items-center gap-2 px-6 py-3 bg-linear-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white text-sm font-semibold rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-green-500/30">
               <Plus className="w-5 h-5" />
               Generate New Report
             </button>
@@ -320,7 +320,7 @@ function Reports(): JSX.Element {
             {filteredReports.map((report) => (
               <div
                 key={report.id}
-                className="group relative bg-linear-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-xl rounded-3xl p-6 border border-gray-700/50 hover:border-gray-600 transition-all duration-300 hover:scale-105 cursor-pointer overflow-hidden"
+                className="group relative bg-linear-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-xl rounded-3xl p-6 border border-gray-700/50 hover:border-gray-600 transition-all duration-300 cursor-pointer overflow-hidden"
               >
                 <div
                   className={`absolute inset-0 bg-linear-to-br ${report.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-300`}
@@ -404,7 +404,7 @@ function Reports(): JSX.Element {
               <p className="text-gray-400 mb-6">
                 Try adjusting your filters or generate a new report
               </p>
-              <button className="px-6 py-3 bg-linear-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white text-sm font-semibold rounded-xl transition-all duration-300 hover:scale-105">
+              <button className="px-6 py-3 bg-linear-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white text-sm font-semibold rounded-xl transition-all duration-300">
                 Generate New Report
               </button>
             </div>
@@ -539,7 +539,7 @@ function Reports(): JSX.Element {
                     <FileSpreadsheet className="w-4 h-4" />
                     Export CSV
                   </button>
-                  <button className="flex items-center gap-2 px-5 py-2.5 bg-linear-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white text-sm font-semibold rounded-xl transition-all duration-300 hover:scale-105">
+                  <button className="flex items-center gap-2 px-5 py-2.5 bg-linear-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white text-sm font-semibold rounded-xl transition-all duration-300">
                     <Download className="w-4 h-4" />
                     Download PDF
                   </button>
