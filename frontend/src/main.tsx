@@ -4,13 +4,13 @@ import "./index.css";
 import App from "./App.tsx";
 import { BrowserRouter } from "react-router";
 import AnimateScroll from "./animations/AnimateScroll";
-import ScrollToTop from "./components/ScrollToTop";
+import ScrollToSection from "./components/ScrollToSection";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <AnimateScroll />
     <BrowserRouter>
-      <ScrollToTop />
+      <ScrollToSection />
       <App />
     </BrowserRouter>
   </StrictMode>

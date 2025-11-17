@@ -17,7 +17,7 @@ function About(): JSX.Element {
   ];
 
   return (
-    <div className="w-full overflow-hidden">
+    <div id="about" className="w-full overflow-hidden">
       <div
         className={`${layoutStyles} flex-column lg:flex justify-between py-5 md:py-8 lg:py-12`}
       >

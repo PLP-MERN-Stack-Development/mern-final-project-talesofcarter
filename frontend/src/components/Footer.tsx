@@ -6,7 +6,7 @@ import { Link } from "react-router";
 
 function Footer(): JSX.Element {
   return (
-    <footer className="w-full bg-pine-green overflow-hidden">
+    <footer id="contact" className="w-full bg-pine-green overflow-hidden">
       <div className={`${layoutStyles} py-12 md:py-16 lg:py-20 relative z-10`}>
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 lg:gap-12">

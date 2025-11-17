@@ -1,6 +1,7 @@
 import { type JSX } from "react";
 import { layoutStyles } from "../utils/globalStyles";
 import { ArrowRight } from "lucide-react";
+import { Link } from "react-router";
 
 function CTA(): JSX.Element {
   return (
@@ -34,18 +35,24 @@ function CTA(): JSX.Element {
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                  <button className="group px-8 py-4 bg-linear-to-r from-emerald-500 to-teal-500 text-white font-semibold rounded-xl hover:shadow-xl hover:shadow-emerald-500/40 transition-all duration-300  flex items-center gap-2 cursor-pointer">
+                  <Link
+                    to="/signup"
+                    className="group px-8 py-4 bg-linear-to-r from-emerald-500 to-teal-500 text-white font-semibold rounded-xl hover:shadow-xl hover:shadow-emerald-500/40 transition-all duration-300  flex items-center gap-2 cursor-pointer"
+                  >
                     Get Started Today
                     <ArrowRight
                       size={20}
                       className="group-hover:translate-x-1 transition-transform duration-300"
                       strokeWidth={2.5}
                     />
-                  </button>
+                  </Link>
 
-                  <button className="px-8 py-4 bg-slate-100 text-slate-900 font-semibold rounded-xl hover:bg-emerald-50 hover:text-emerald-700 border-2 border-transparent hover:border-emerald-200 transition-all duration-300 cursor-pointer">
+                  <Link
+                    to="#contact"
+                    className="px-8 py-4 bg-slate-100 text-slate-900 font-semibold rounded-xl hover:bg-emerald-50 hover:text-emerald-700 border-2 border-transparent hover:border-emerald-200 transition-all duration-300 cursor-pointer"
+                  >
                     Schedule a Demo
-                  </button>
+                  </Link>
                 </div>
 
                 <div className="mt-10 pt-8 border-t border-slate-200">

@@ -1,7 +1,7 @@
 import { type JSX, useState, useEffect, useCallback } from "react";
-import Button from "./Button";
 import SplitText from "../animations/SplitText";
 import AOS from "aos";
+import { Link } from "react-router";
 
 interface HeroSlide {
   image: string;
@@ -128,12 +128,19 @@ function Hero(): JSX.Element {
                 data-aos-delay="400"
                 className="flex flex-col sm:flex-row gap-4"
               >
-                <Button className="px-8 py-4 bg-accent hover:bg-transparent border-2 border-transparent hover:border-accent text-white hover:text-accent rounded-full">
+                <Link
+                  to="/signup"
+                  className="px-8 py-4 bg-accent hover:bg-transparent border-2 border-transparent hover:border-accent text-white hover:text-accent text-center rounded-full"
+                >
                   Get Started
-                </Button>
-                <Button className="px-8 py-4 bg-transparent border-2 border-white hover:bg-white hover:text-black text-white rounded-full">
+                </Link>
+
+                <Link
+                  to="#about"
+                  className="px-8 py-4 bg-transparent border-2 border-white hover:bg-white hover:text-black text-white rounded-full"
+                >
                   Learn More
-                </Button>
+                </Link>
               </div>
             </div>
           </div>
