@@ -1,4 +1,4 @@
-# Avron
+# ProQure
 
 This assignment focuses on designing, developing, and deploying a comprehensive full-stack MERN application that showcases all the skills you've learned throughout the course.
 
