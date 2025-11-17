@@ -4,6 +4,10 @@ body {
   font-family: "Stack Sans Text", sans-serif;
 }
 
+button {
+  cursor: pointer;
+}
+
 @theme {
   --color-accent: #99f36c;
   --color-pine-green: #25494a;
