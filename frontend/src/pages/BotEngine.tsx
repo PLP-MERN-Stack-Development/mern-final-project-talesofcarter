@@ -88,7 +88,11 @@ function BotEngine(): JSX.Element {
   ];
 
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    const messagesRef = chatEndRef.current;
+
+    if (messagesRef) {
+      messagesRef.scrollTop = messagesRef.scrollHeight;
+    }
   }, [messages]);
 
   const handleSendMessage = () => {
@@ -395,7 +399,10 @@ function BotEngine(): JSX.Element {
                 </div>
 
                 {/* Messages Area */}
-                <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                <div
+                  ref={chatEndRef}
+                  className="flex-1 overflow-y-auto p-4 space-y-4"
+                >
                   {messages.map((message) => (
                     <div
                       key={message.id}
@@ -443,7 +450,6 @@ function BotEngine(): JSX.Element {
                       </div>
                     </div>
                   )}
-                  <div ref={chatEndRef} />
                 </div>
 
                 {/* Input Area */}
