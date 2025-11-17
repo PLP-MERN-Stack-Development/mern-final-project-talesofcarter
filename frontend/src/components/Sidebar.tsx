@@ -74,6 +74,7 @@ function Sidebar({
                 <Link
                   key={item.label}
                   to={item.href}
+                  onClick={onClose}
                   className="group flex items-center justify-between gap-3 px-4 py-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-emerald-500/30 transition-all duration-300"
                   style={{
                     animation: `slideInRight 0.3s ease-out ${
