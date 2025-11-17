@@ -1,5 +1,5 @@
 import { type JSX, useEffect, useState } from "react";
-import { NavLink } from "react-router";
+import { NavLink, useNavigate } from "react-router";
 import Button from "./Button";
 
 type NavLinksType = { label: string; path: string };
@@ -8,6 +8,12 @@ function Navbar({ toggleSidebar }: { toggleSidebar: () => void }): JSX.Element {
   const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const navigate = useNavigate();
+
+  const handleNavClick = (path: string) => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    navigate(path);
+  };
 
   const navLinks: NavLinksType[] = [
     { label: "Home", path: "/" },
@@ -64,14 +70,14 @@ function Navbar({ toggleSidebar }: { toggleSidebar: () => void }): JSX.Element {
 
           <div className="hidden lg:flex items-center gap-8 xl:gap-10">
             {navLinks.map((item) => (
-              <NavLink
+              <div
                 key={item.label}
-                to={item.path}
-                className="text-base font-bold hover:text-accent uppercase transition-colors relative group"
+                onClick={() => handleNavClick(item.path)}
+                className="text-base font-bold hover:text-accent uppercase transition-colors relative group cursor-pointer"
               >
                 {item.label}
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-accent transition-all duration-300 group-hover:w-full"></span>
-              </NavLink>
+              </div>
             ))}
           </div>
 
