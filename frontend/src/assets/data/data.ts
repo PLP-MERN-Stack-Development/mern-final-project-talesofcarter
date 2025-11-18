@@ -71,7 +71,7 @@ export const plansData: PlansDataType[] = [
     idealFor: "Ideal for startups",
     planPrice: 0,
     featuresPack: [
-      "CSV and Excel data import",
+      "Basic AI insights",
       "Basic CO₂ impact analytics",
       "Essential supplier scoring",
       "Monthly sustainability reports",
@@ -125,7 +125,7 @@ export const queriesData: QueriesType[] = [
   {
     query: "Can I import my existing procurement data?",
     answer:
-      "Yes, ProQure allows CSV, Excel, and automated data imports from your internal systems.",
+      "Not. In future, ProQure plans to allow CSV, Excel, and automated data imports from your internal systems.",
   },
   {
     query: "How does the AI generate recommendations?",
@@ -134,8 +134,7 @@ export const queriesData: QueriesType[] = [
   },
   {
     query: "Can we export sustainability reports?",
-    answer:
-      "Absolutely. You can export reports in PDF, Excel, and dashboard snapshots for audits or presentations.",
+    answer: "Absolutely. You can export reports in JSON.",
   },
   {
     query: "Is ProQure suitable for small teams?",
