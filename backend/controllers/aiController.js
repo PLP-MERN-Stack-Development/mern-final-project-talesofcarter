@@ -4,195 +4,187 @@ import Report from "../models/Report.js";
 const API_URL = "https://router.huggingface.co/v1/chat/completions";
 const MODEL_ID = "openai/gpt-oss-120b:together";
 
-export const analyze = async (req, res) => {
+/**
+ * Call HuggingFace LLM
+ */
+const callHuggingFaceLLM = async (prompt) => {
+  if (!process.env.HF_TOKEN) {
+    console.error("Hugging Face API token not set");
+    throw new Error("Hugging Face API token not configured.");
+  }
+
+  const headers = {
+    Authorization: `Bearer ${process.env.HF_TOKEN}`,
+    "Content-Type": "application/json",
+  };
+
+  const payload = {
+    model: MODEL_ID,
+    messages: [
+      {
+        role: "system",
+        content:
+          "You are an expert AI for sustainable procurement analysis. Your sole task is to generate ONLY a single valid JSON object containing the full supplier ESG report. DO NOT include any text, Markdown, or tables outside of the JSON.",
+      },
+      { role: "user", content: prompt },
+    ],
+    max_tokens: 2000,
+    temperature: 0.5,
+  };
+
+  try {
+    const response = await axios.post(API_URL, payload, {
+      headers,
+      timeout: 60000,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Failed to call Hugging Face LLM:", error.message);
+    if (error.response) console.log(error.response.data);
+    throw new Error("Failed to reach the AI analysis service.");
+  }
+};
+
+/**
+ * Clean and parse LLM output
+ */
+const cleanAndParseJson = (llmOutputText) => {
+  const match = llmOutputText.match(/{[\s\S]*}/);
+  if (!match) {
+    console.error("No JSON object found in LLM output:", llmOutputText);
+    return null;
+  }
+
+  try {
+    const parsed = JSON.parse(match[0]);
+    return parsed;
+  } catch (err) {
+    console.error("Failed to parse JSON:", err.message);
+    console.log("Attempted JSON:", match[0]);
+    return null;
+  }
+};
+
+/**
+ * Analyze Supplier
+ */
+export const analyzeSupplier = async (req, res) => {
   try {
     const { supplierName, industry, responses } = req.body;
+    const userId = req.user;
 
-    // Build prompt
+    if (!supplierName || !industry || !responses) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Missing required fields." });
+    }
+
+    // 1. Construct prompt
     const prompt = `
-        You are an advanced Sustainability & ESG Procurement Analyst AI with expertise in:
-        - Supplier risk assessment
-        - Environmental impact calculations
-        - Scope 1, 2, and 3 emissions estimation
-        - ESG benchmarking using Fortune 500 industry standards
-        - Sustainable procurement frameworks (ISO 20400)
-        - Social, ethical, and diversity performance evaluation
-        - Modern slavery and supply chain due diligence
-        - Corporate sustainability reporting (CSRD, GRI, SASB)
+      You are an expert AI in sustainable procurement, ESG analysis, and supplier risk management.
 
-        Analyze the supplier based on the information below.
+      Analyze the supplier based on the data below and generate a structured JSON report. Include numeric and textual insights, actionable recommendations, and benchmarking. Ensure the recommendations and suggestions are as descriptive as possible. Give a brief overview of how Fortune 500 companies in the same industry as doing, just to enrich the context of insights.
 
-        ### Supplier Information
-        Supplier Name: ${supplierName}
-        Industry: ${industry}
+      Supplier Name: "${supplierName}"
+      Industry: "${industry}"
+      Responses: ${JSON.stringify(responses, null, 2)}
 
-        ### Supplier Responses
-        ${JSON.stringify(responses, null, 2)}
+      Return ONLY a single JSON object with the following keys:
 
-        ---
-
-        ### Your Task
-        Generate a comprehensive sustainability, ESG, and procurement analysis that includes structured NUMERIC and TEXTUAL insights.
-
-        Your output MUST contain:
-
-        ---
-
-        ## 1. Environmental Impact (Numeric + Text)
-        - Estimate **Scope 1, Scope 2, and Scope 3 emissions** (in metric tons CO₂e).
-        - Provide a **Carbon Intensity Score (0–100)**.
-        - Estimate potential **annual CO₂ savings** if sustainable alternatives are implemented.
-        - Compare the supplier’s carbon performance against **Fortune 500 companies in the same industry**.
-        - Provide **3–5 actionable ways** to reduce emissions.
-
-        ---
-
-        ## 2. ESG Scoring (Numeric)
-        Provide a full ESG breakdown:
-
-        - **Environmental Score** (0–100)
-        - **Social Score** (0–100)
-        - **Governance Score** (0–100)
-        - **Overall ESG Rating** (A, B, C, D, E)
-
-        Each score must include a short explanation.
-
-        ---
-
-        ## 3. Supplier Risk Analysis (Numeric)
-        - **Risk Score (1–10)** – higher means more risky.
-        - Breakdown of risk categories:
-        - Financial stability
-        - Supply continuity
-        - Ethical risk
-        - Country/geo-political risk
-        - Environmental compliance risk
-        - Identify any **red flags**.
-
-        ---
-
-        ## 4. Spend & Cost Efficiency Insights
-        Using procurement benchmarks:
-        - Estimate potential **cost inefficiencies** (%).
-        - Show how similar **Fortune 500 companies optimize spend** in this category.
-        - Suggest improvement opportunities.
-
-        ---
-
-        ## 5. Diversity & Social Responsibility
-        - Determine whether the supplier aligns with:
-        - DEI goals
-        - Fair labour standards
-        - Modern slavery compliance
-        - Provide **a diversity alignment score (0–100)**.
-        - Provide recommended improvements.
-
-        ---
-
-        ## 6. Fortune 500 Benchmark Comparison
-        Compare supplier against Fortune 500 leaders in the same sector:
-        - ESG average scores
-        - CO₂ intensity range
-        - Risk thresholds
-        - Typical compliance maturity level
-        - Where this supplier falls on a **percentile ranking** (e.g., “34th percentile vs Fortune 500”).
-
-        ---
-
-        ## 7. Final Procurement Recommendation
-        Provide a professional procurement recommendation with:
-        - Summary of strengths
-        - Summary of weaknesses
-        - **Go / Conditional Go / Do Not Proceed** verdict
-        - Supplier Development Plan (if applicable)
-
-        ---
-
-        ## 8. JSON Output Template
-        Return all results ALSO in a JSON-friendly format with the structure below:
-
-        {
-        "supplierName": "",
-        "industry": "",
-        "environment": {
-            "scope1": 0,
-            "scope2": 0,
-            "scope3": 0,
-            "carbonIntensityScore": 0,
-            "co2SavingsPotential": "",
-            "summary": ""
-        },
-        "esg": {
-            "environmental": 0,
-            "social": 0,
-            "governance": 0,
-            "overallRating": ""
-        },
-        "risk": {
-            "riskScore": 0,
-            "breakdown": {},
-            "redFlags": []
-        },
-        "spendInsights": {
-            "inefficiencyEstimate": "",
-            "fortune500Comparison": "",
-            "improvementSuggestions": []
-        },
-        "diversity": {
-            "diversityScore": 0,
-            "complianceSummary": "",
-            "recommendations": []
-        },
-        "benchmarking": {
-            "industryPositionPercentile": 0,
-            "fortune500Averages": {}
-        },
-        "finalRecommendation": ""
+      1. "supplierName" - Supplier name
+      2. "industry" - Industry
+      3. "environment" - {
+          "scope1": number (tCO2e),
+          "scope2": number (tCO2e),
+          "scope3": number (tCO2e),
+          "carbonIntensityScore": number (0-100),
+          "co2SavingsPotential": number (tCO2e),
+          "summary": string
         }
+      4. "esg" - {
+          "environmental": number (0-100),
+          "social": number (0-100),
+          "governance": number (0-100),
+          "overallRating": string (A-E)
+        }
+      5. "risk" - {
+          "riskScore": number (1-10),
+          "breakdown": object,
+          "redFlags": array of strings
+        }
+      6. "spendInsights" - {
+          "inefficiencyEstimate": string,
+          "fortune500Comparison": string,
+          "improvementSuggestions": array of strings
+        }
+      7. "diversity" - {
+          "diversityScore": number (0-100),
+          "complianceSummary": string,
+          "recommendations": array of strings
+        }
+      8. "benchmarking" - {
+          "industryPositionPercentile": number,
+          "fortune500Averages": object
+        }
+      9. "finalRecommendation" - string ("Go", "Conditional Go", "Do Not Proceed") with brief plan
 
-        Be accurate, analytical, and provide realistic numeric estimates even if approximated.
-`;
+      Important:
+      - Return valid JSON ONLY.
+      - Include numeric values, percentages, and text explanations.
+      - Provide actionable insights and compare to industry standards.
+      `;
 
-    const response = await axios.post(
-      API_URL,
-      {
-        model: MODEL_ID,
-        messages: [{ role: "user", content: prompt }],
-        temperature: 0.3,
-        max_tokens: 1024,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.HF_TOKEN}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    // 2. Call the AI
+    const apiResponse = await callHuggingFaceLLM(prompt);
 
-    const aiOutput = response.data;
+    if (!apiResponse?.choices?.length) {
+      return res.status(500).json({
+        success: false,
+        message: "Invalid AI response structure.",
+      });
+    }
 
-    // Save report
-    const report = await Report.create({
-      userId: req.user,
+    // 3. Extract & parse content
+    const generatedText = apiResponse.choices[0]?.message?.content;
+    if (!generatedText) {
+      return res.status(500).json({
+        success: false,
+        message: "AI returned empty content.",
+      });
+    }
+
+    const analysisResult = cleanAndParseJson(generatedText);
+    if (!analysisResult) {
+      return res.status(500).json({
+        success: false,
+        message: "AI returned unexpected format. Ensure JSON-only output.",
+      });
+    }
+
+    // 4. Save report to DB
+    const newReport = await Report.create({
+      userId,
       supplierName,
       industry,
       responses,
-      aiOutput,
+      aiOutput: analysisResult,
     });
 
-    res.json({
+    // 5. Send concise summary to frontend
+    const summary = `Analysis Complete! ESG Overall: ${
+      analysisResult.esg?.overallRating || "N/A"
+    }, Risk Score: ${analysisResult.risk?.riskScore || "N/A"}.`;
+
+    res.status(200).json({
       success: true,
-      message: "AI analysis completed",
-      report,
+      summary,
+      fullReport: newReport,
     });
-  } catch (err) {
-    console.error(err.response?.data || err);
-    res
-      .status(500)
-      .json({
-        success: false,
-        message: "AI analysis failed",
-        error: err.message,
-      });
+  } catch (error) {
+    console.error("Analyze Supplier Error:", error);
+    res.status(500).json({
+      success: false,
+      message: error.message || "Internal server error",
+    });
   }
 };
