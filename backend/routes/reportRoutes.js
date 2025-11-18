@@ -8,10 +8,10 @@ import { protect } from "../middleware/authMiddleware.js";
 
 const reportRouter = express.Router();
 
-reportRouter.use(protect); // all routes require authentication
+reportRouter.use(protect);
 
-reportRouter.get("/", getAllReports); // GET /api/reports
-reportRouter.get("/:id", getReportById); // GET /api/reports/:id
-reportRouter.get("/suppliers/list", getSuppliers); // GET /api/reports/suppliers/list
+reportRouter.get("/", getAllReports);
+reportRouter.get("/:id", getReportById);
+reportRouter.get("/suppliers/list", getSuppliers);
 
 export default reportRouter;
