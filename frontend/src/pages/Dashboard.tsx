@@ -65,6 +65,7 @@ function Dashboard(): JSX.Element {
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [suppliers, setSuppliers] = useState<SupplierData[]>([]);
   const [loading, setLoading] = useState(true);
+  console.log(loading);
 
   const mockSuppliers: SupplierData[] = [
     {
