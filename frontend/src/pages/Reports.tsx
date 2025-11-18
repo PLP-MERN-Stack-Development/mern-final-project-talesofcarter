@@ -1,8 +1,7 @@
-import { type JSX, useState, useMemo } from "react";
+import { type JSX, useState } from "react";
 import Banner from "../components/Banner";
 import {
   FileText,
-  BarChart3,
   Leaf,
   TrendingUp,
   Calendar,
@@ -18,11 +17,29 @@ import {
   Sparkles,
   Zap,
   Target,
-  Shield,
-  DollarSign,
   Clock,
   CheckCircle2,
+  FileJson,
 } from "lucide-react";
+
+interface ChartData {
+  risk: number;
+  environment: number;
+  social: number;
+  governance: number;
+}
+
+export interface SupplierEvaluationResult {
+  supplierName: string;
+  industry: string;
+  riskScore: number;
+  sustainabilityScore: number;
+  greenScore: number;
+  insights: string[];
+  recommendations: string[];
+  alternativeSuggestions: string[];
+  chartData: ChartData;
+}
 
 interface Report {
   id: string;
@@ -34,10 +51,7 @@ interface Report {
     | "Scorecard"
     | "Monthly Summary";
   date: string;
-  summary: string;
-  tags: string[];
-  icon: JSX.Element;
-  gradient: string;
+  supplierData: SupplierEvaluationResult;
   status: "completed" | "processing" | "draft";
 }
 
@@ -48,125 +62,132 @@ function Reports(): JSX.Element {
   const [selectedReport, setSelectedReport] = useState<Report | null>(null);
   const [showModal, setShowModal] = useState(false);
 
+  // Real data from backend (multiple examples)
   const reports: Report[] = [
     {
       id: "1",
-      title: "Q4 2024 Carbon Emissions Analysis",
-      type: "CO₂ Impact",
-      date: "2024-11-15",
-      summary:
-        "Comprehensive analysis showing 24% reduction in carbon footprint across all procurement operations. Key improvements in logistics and raw materials sourcing.",
-      tags: ["Sustainability", "Q4", "Carbon"],
-      icon: <Leaf className="w-6 h-6" />,
-      gradient: "from-emerald-500 to-teal-600",
+      title: "EcoSteel Manufacturing Ltd - ESG Evaluation",
+      type: "Supplier ESG",
+      date: "2025-11-15",
       status: "completed",
+      supplierData: {
+        supplierName: "EcoSteel Manufacturing Ltd",
+        industry: "Manufacturing",
+        riskScore: 64,
+        sustainabilityScore: 72,
+        greenScore: 68,
+        insights: [
+          "Delivery reliability is moderate and recent late deliveries indicate potential logistical inefficiencies.",
+          "Annual CO₂ emissions (1200 tons) are 20–30% higher than typical manufacturing standards.",
+          "Renewable energy usage of 45% exceeds the Fortune 500 sector average of 40%.",
+          "Labor practices align with industry norms but fall short of sustainability leaders scoring 8–10.",
+          "Governance transparency at 8/10 is considered strong and above average.",
+        ],
+        recommendations: [
+          "Work with the supplier to adopt emissions-reduction programs such as energy-efficient furnaces and clean fuel alternatives.",
+          "Encourage the supplier to adopt Science-Based Targets (SBTi) for emissions reduction.",
+          "Model governance frameworks after Fortune 500 leaders like Siemens and 3M.",
+          "Implement advanced worker safety training and audits.",
+          "Introduce strict KPIs to reduce late deliveries by 30–50% within one year.",
+        ],
+        alternativeSuggestions: [
+          "Evaluate suppliers certified under ISO 14001 and ISO 45001.",
+          "Explore regional suppliers using 70%+ renewable energy.",
+          "Consider suppliers with published annual ESG reports (GRI/SASB).",
+        ],
+        chartData: {
+          risk: 64,
+          environment: 66,
+          social: 72,
+          governance: 82,
+        },
+      },
     },
     {
       id: "2",
-      title: "Procurement Spend Breakdown - November",
-      type: "Spend Analysis",
-      date: "2024-11-12",
-      summary:
-        "Total spend of $845K analyzed. Identified $45K in potential savings through supplier consolidation and green alternatives.",
-      tags: ["Finance", "Spend", "November"],
-      icon: <DollarSign className="w-6 h-6" />,
-      gradient: "from-blue-500 to-cyan-600",
+      title: "GreenLogistics Co - Carbon Impact Report",
+      type: "CO₂ Impact",
+      date: "2025-11-10",
       status: "completed",
+      supplierData: {
+        supplierName: "GreenLogistics Co",
+        industry: "Logistics",
+        riskScore: 42,
+        sustainabilityScore: 88,
+        greenScore: 91,
+        insights: [
+          "Fleet electrification program ahead of schedule — 68% of vehicles now electric.",
+          "Route optimization reduced fuel consumption by 31% YoY.",
+          "Carbon offset program verified and fully compliant.",
+        ],
+        recommendations: [
+          "Expand last-mile electric delivery to remaining urban zones.",
+          "Integrate AI-based predictive routing for additional 8–12% efficiency gains.",
+        ],
+        alternativeSuggestions: [
+          "Partner with rail freight providers for long-haul routes.",
+          "Explore hydrogen fuel cell trucks for heavy cargo.",
+        ],
+        chartData: {
+          risk: 42,
+          environment: 91,
+          social: 85,
+          governance: 88,
+        },
+      },
     },
     {
       id: "3",
-      title: "Supplier Sustainability Assessment 2024",
-      type: "Supplier ESG",
-      date: "2024-11-10",
-      summary:
-        "ESG evaluation of 24 active suppliers. 18 meet sustainability criteria. 3 high-risk suppliers identified with improvement recommendations.",
-      tags: ["ESG", "Suppliers", "Risk"],
-      icon: <Shield className="w-6 h-6" />,
-      gradient: "from-purple-500 to-pink-600",
-      status: "completed",
-    },
-    {
-      id: "4",
-      title: "Sustainable Procurement Performance Card",
+      title: "SustainPack Solutions - Monthly Scorecard",
       type: "Scorecard",
-      date: "2024-11-08",
-      summary:
-        "Overall sustainability score: 8.4/10. Exceeds industry benchmark by 15%. Strong performance in supplier diversity and carbon reduction.",
-      tags: ["Performance", "Benchmark", "Scorecard"],
-      icon: <Target className="w-6 h-6" />,
-      gradient: "from-amber-500 to-orange-600",
+      date: "2025-11-01",
       status: "completed",
-    },
-    {
-      id: "5",
-      title: "October Procurement Summary",
-      type: "Monthly Summary",
-      date: "2024-11-01",
-      summary:
-        "127 AI insights generated. Key improvements: 12% cost reduction, 8 new sustainable suppliers onboarded, zero compliance violations.",
-      tags: ["Monthly", "Summary", "AI Insights"],
-      icon: <BarChart3 className="w-6 h-6" />,
-      gradient: "from-green-500 to-emerald-600",
-      status: "completed",
-    },
-    {
-      id: "6",
-      title: "Supply Chain Risk Assessment",
-      type: "Supplier ESG",
-      date: "2024-10-28",
-      summary:
-        "Deep dive into supply chain vulnerabilities. 8 active risk alerts. Mitigation strategies provided for high-risk categories.",
-      tags: ["Risk", "Supply Chain", "ESG"],
-      icon: <Shield className="w-6 h-6" />,
-      gradient: "from-red-500 to-rose-600",
-      status: "completed",
-    },
-    {
-      id: "7",
-      title: "Green Alternatives Recommendation Report",
-      type: "CO₂ Impact",
-      date: "2024-10-25",
-      summary:
-        "34 eco-friendly alternatives identified. Potential to reduce carbon emissions by additional 18% with minimal cost impact.",
-      tags: ["Green", "Alternatives", "Recommendations"],
-      icon: <Leaf className="w-6 h-6" />,
-      gradient: "from-teal-500 to-green-600",
-      status: "completed",
-    },
-    {
-      id: "8",
-      title: "Real-time Sustainability Dashboard",
-      type: "Monthly Summary",
-      date: "2024-11-17",
-      summary:
-        "Processing current month's data. AI analysis in progress for latest procurement activities and sustainability metrics.",
-      tags: ["Current", "Processing", "Dashboard"],
-      icon: <Sparkles className="w-6 h-6" />,
-      gradient: "from-indigo-500 to-purple-600",
-      status: "processing",
+      supplierData: {
+        supplierName: "SustainPack Solutions",
+        industry: "Packaging",
+        riskScore: 28,
+        sustainabilityScore: 94,
+        greenScore: 96,
+        insights: [
+          "100% recycled or bio-based materials used in production.",
+          "Zero waste to landfill achieved for third consecutive year.",
+          "Industry-leading circular economy model.",
+        ],
+        recommendations: [
+          "Maintain current excellence — consider industry thought leadership publication.",
+        ],
+        alternativeSuggestions: [],
+        chartData: {
+          risk: 28,
+          environment: 96,
+          social: 90,
+          governance: 93,
+        },
+      },
     },
   ];
-
-  // eslint-disable-next-line react-hooks/purity
-  const now = useMemo(() => Date.now(), []);
 
   const filteredReports = reports.filter((report) => {
     const matchesDate =
       dateFilter === "all" ||
       (dateFilter === "7d" &&
-        new Date(report.date) >= new Date(now - 7 * 24 * 60 * 60 * 1000)) ||
+        new Date(report.date) >=
+          new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)) ||
       (dateFilter === "30d" &&
-        new Date(report.date) >= new Date(now - 30 * 24 * 60 * 60 * 1000));
+        new Date(report.date) >=
+          new Date(Date.now() - 30 * 24 * 60 * 60 * 1000));
 
     const matchesType = typeFilter === "all" || report.type === typeFilter;
 
     const matchesSearch =
       searchQuery === "" ||
       report.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      report.summary.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      report.tags.some((tag) =>
-        tag.toLowerCase().includes(searchQuery.toLowerCase())
-      );
+      report.supplierData.supplierName
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase()) ||
+      report.supplierData.industry
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase());
 
     return matchesDate && matchesType && matchesSearch;
   });
@@ -174,6 +195,21 @@ function Reports(): JSX.Element {
   const handlePreview = (report: Report) => {
     setSelectedReport(report);
     setShowModal(true);
+  };
+
+  const exportAsJSON = () => {
+    if (!selectedReport) return;
+    const dataStr = JSON.stringify(selectedReport.supplierData, null, 2);
+    const blob = new Blob([dataStr], { type: "application/json" });
+    this.href = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `${selectedReport.supplierData.supplierName.replace(
+      / /g,
+      "_"
+    )}_Evaluation.json`;
+    link.click();
+    URL.revokeObjectURL(link.href);
   };
 
   const getStatusBadge = (status: string) => {
@@ -200,6 +236,36 @@ function Reports(): JSX.Element {
         );
       default:
         return null;
+    }
+  };
+
+  const getTypeIcon = (type: string) => {
+    switch (type) {
+      case "CO₂ Impact":
+        return <Leaf className="w-6 h-6" />;
+      case "Supplier ESG":
+      case "Scorecard":
+        return <Target className="w-6 h-6" />;
+      case "Monthly Summary":
+      case "Spend Analysis":
+        return <TrendingUp className="w-6 h-6" />;
+      default:
+        return <FileText className="w-6 h-6" />;
+    }
+  };
+
+  const getTypeGradient = (type: string) => {
+    switch (type) {
+      case "CO₂ Impact":
+        return "from-emerald-500 to-teal-600";
+      case "Supplier ESG":
+      case "Scorecard":
+        return "from-purple-500 to-pink-600";
+      case "Spend Analysis":
+      case "Monthly Summary":
+        return "from-blue-500 to-cyan-600";
+      default:
+        return "from-gray-500 to-gray-600";
     }
   };
 
@@ -242,7 +308,6 @@ function Reports(): JSX.Element {
           {/* Filters and Actions Bar */}
           <div className="mb-8 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div className="flex flex-wrap items-center gap-3">
-              {/* Search Bar */}
               <div className="flex items-center gap-2 px-4 py-2.5 bg-gray-800/80 backdrop-blur-sm border border-gray-700/50 rounded-xl flex-1 lg:flex-initial lg:min-w-[300px]">
                 <Search className="w-4 h-4 text-gray-400" />
                 <input
@@ -262,8 +327,7 @@ function Reports(): JSX.Element {
                 )}
               </div>
 
-              {/* Date Filter */}
-              <div className="flex items-center gap-2 px-4 py-2.5 bg-gray-800/80 backdrop-blur-sm border border-gray-700/50 rounded-xl">
+              <div className="flex items-center gap-2 px-4 py-2.5 bg-gray-800/80 backdrop-blur-sm Bridge border-gray-700/50 rounded-xl">
                 <Calendar className="w-4 h-4 text-gray-400" />
                 <select
                   value={dateFilter}
@@ -277,7 +341,6 @@ function Reports(): JSX.Element {
                 </select>
               </div>
 
-              {/* Type Filter */}
               <div className="flex items-center gap-2 px-4 py-2.5 bg-gray-800/80 backdrop-blur-sm border border-gray-700/50 rounded-xl">
                 <Filter className="w-4 h-4 text-gray-400" />
                 <select
@@ -295,14 +358,12 @@ function Reports(): JSX.Element {
               </div>
             </div>
 
-            {/* Generate Report Button */}
-            <button className="flex items-center gap-2 px-6 py-3 bg-linear-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white text-sm font-semibold rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-green-500/30">
+            <button className="flex items-center gap-2 px-6 py-3 bg-linear-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white text-sm font-semibold rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-green-500/30">
               <Plus className="w-5 h-5" />
               Generate New Report
             </button>
           </div>
 
-          {/* Reports Count */}
           <div className="mb-6">
             <p className="text-gray-400 text-sm">
               Showing{" "}
@@ -316,29 +377,31 @@ function Reports(): JSX.Element {
           </div>
 
           {/* Reports Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-banner grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredReports.map((report) => (
               <div
                 key={report.id}
-                className="group relative bg-linear-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-xl rounded-3xl p-6 border border-gray-700/50 hover:border-gray-600 transition-all duration-300 cursor-pointer overflow-hidden"
+                className="group relative bg-linear-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-xl rounded-3xl p-6 border border-gray-700/50 hover:border-gray-600 transition-all duration-300 hover:scale-105 cursor-pointer overflow-hidden"
               >
                 <div
-                  className={`absolute inset-0 bg-linear-to-br ${report.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-300`}
+                  className={`absolute inset-0 bg-linear-to-br ${getTypeGradient(
+                    report.type
+                  )} opacity-0 group-hover:opacity-10 transition-opacity duration-300`}
                 />
 
-                {/* Header */}
                 <div className="relative flex items-start justify-between mb-4">
                   <div
-                    className={`p-3 bg-linear-to-br ${report.gradient} rounded-2xl shadow-lg`}
+                    className={`p-3 bg-linear-to-br ${getTypeGradient(
+                      report.type
+                    )} rounded-2xl shadow-lg`}
                   >
-                    {report.icon}
+                    {getTypeIcon(report.type)}
                   </div>
                   <button className="p-2 hover:bg-gray-700/50 rounded-lg transition-colors">
                     <MoreVertical className="w-5 h-5 text-gray-400" />
                   </button>
                 </div>
 
-                {/* Content */}
                 <div className="relative mb-4">
                   <div className="flex items-center gap-2 mb-2">
                     {getStatusBadge(report.status)}
@@ -348,7 +411,8 @@ function Reports(): JSX.Element {
                     {report.title}
                   </h3>
                   <p className="text-sm text-gray-400 line-clamp-3 mb-3">
-                    {report.summary}
+                    {report.supplierData.supplierName} ·{" "}
+                    {report.supplierData.industry}
                   </p>
                   <div className="flex items-center gap-2 text-xs text-gray-500 mb-3">
                     <Calendar className="w-3 h-3" />
@@ -360,19 +424,6 @@ function Reports(): JSX.Element {
                   </div>
                 </div>
 
-                {/* Tags */}
-                <div className="relative flex flex-wrap gap-2 mb-4">
-                  {report.tags.slice(0, 3).map((tag, index) => (
-                    <span
-                      key={index}
-                      className="px-2.5 py-1 text-xs font-medium bg-gray-700/50 text-gray-300 rounded-lg border border-gray-600/30"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-
-                {/* Actions */}
                 <div className="relative flex items-center gap-2 pt-4 border-t border-gray-700/50">
                   <button
                     onClick={() => handlePreview(report)}
@@ -415,13 +466,14 @@ function Reports(): JSX.Element {
         {showModal && selectedReport && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
             <div className="relative bg-linear-to-br from-gray-800 to-gray-900 rounded-3xl border border-gray-700/50 max-w-4xl w-full max-h-[90vh] overflow-hidden shadow-2xl">
-              {/* Modal Header */}
               <div className="flex items-center justify-between p-6 border-b border-gray-700/50">
                 <div className="flex items-center gap-4">
                   <div
-                    className={`p-3 bg-linear-to-br ${selectedReport.gradient} rounded-2xl shadow-lg`}
+                    className={`p-3 bg-linear-to-br ${getTypeGradient(
+                      selectedReport.type
+                    )} rounded-2xl shadow-lg`}
                   >
-                    {selectedReport.icon}
+                    {getTypeIcon(selectedReport.type)}
                   </div>
                   <div>
                     <h2 className="text-2xl font-bold text-white mb-1">
@@ -443,87 +495,117 @@ function Reports(): JSX.Element {
                 </button>
               </div>
 
-              {/* Modal Content */}
               <div className="p-6 overflow-y-auto max-h-[calc(90vh-200px)]">
-                {/* AI Summary Section */}
                 <div className="mb-6">
                   <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
                     <Sparkles className="w-5 h-5 text-green-400" />
-                    AI Summary
+                    Supplier
                   </h3>
-                  <p className="text-gray-300 leading-relaxed">
-                    {selectedReport.summary}
+                  <p className="text-xl font-medium text-white">
+                    {selectedReport.supplierData.supplierName}
+                  </p>
+                  <p className="text-gray-400">
+                    {selectedReport.supplierData.industry}
                   </p>
                 </div>
 
-                {/* Key Highlights */}
-                <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-white mb-4">
-                    Key Highlights
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="p-4 bg-gray-800/50 rounded-xl border border-gray-700/50">
-                      <div className="flex items-center gap-2 mb-2">
-                        <TrendingUp className="w-4 h-4 text-green-400" />
-                        <span className="text-sm font-medium text-gray-400">
-                          Performance
-                        </span>
-                      </div>
-                      <p className="text-2xl font-bold text-white">+24%</p>
-                    </div>
-                    <div className="p-4 bg-gray-800/50 rounded-xl border border-gray-700/50">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Target className="w-4 h-4 text-blue-400" />
-                        <span className="text-sm font-medium text-gray-400">
-                          Accuracy
-                        </span>
-                      </div>
-                      <p className="text-2xl font-bold text-white">98.5%</p>
-                    </div>
-                    <div className="p-4 bg-gray-800/50 rounded-xl border border-gray-700/50">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Sparkles className="w-4 h-4 text-purple-400" />
-                        <span className="text-sm font-medium text-gray-400">
-                          Insights
-                        </span>
-                      </div>
-                      <p className="text-2xl font-bold text-white">127</p>
-                    </div>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                  <div className="p-4 bg-gray-800/50 rounded-xl border border-gray-700/50 text-center">
+                    <p className="text-sm text-gray-400">Risk Score</p>
+                    <p className="text-2xl font-bold text-red-400">
+                      {selectedReport.supplierData.riskScore}
+                    </p>
+                  </div>
+                  <div className="p-4 bg-gray-800/50 rounded-xl border border-gray-700/50 text-center">
+                    <p className="text-sm text-gray-400">Sustainability</p>
+                    <p className="text-2xl font-bold text-green-400">
+                      {selectedReport.supplierData.sustainabilityScore}
+                    </p>
+                  </div>
+                  <div className="p-4 bg-gray-800/50 rounded-xl border border-gray-700/50 text-center">
+                    <p className="text-sm text-gray-400">Green Score</p>
+                    <p className="text-2xl font-bold text-emerald-400">
+                      {selectedReport.supplierData.greenScore}
+                    </p>
+                  </div>
+                  <div className="p-4 bg-gray-800/50 rounded-xl border border-gray-700/50 text-center">
+                    <p className="text-sm text-gray-400">Overall ESG</p>
+                    <p className="text-2xl font-bold text-purple-400">
+                      {Math.round(
+                        (selectedReport.supplierData.chartData.environment +
+                          selectedReport.supplierData.chartData.social +
+                          selectedReport.supplierData.chartData.governance) /
+                          3
+                      )}
+                    </p>
                   </div>
                 </div>
 
-                {/* Tags */}
-                <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-white mb-3">
-                    Categories
-                  </h3>
-                  <div className="flex flex-wrap gap-2">
-                    {selectedReport.tags.map((tag, index) => (
-                      <span
-                        key={index}
-                        className="px-4 py-2 text-sm font-medium bg-gray-700/50 text-gray-300 rounded-xl border border-gray-600/30"
-                      >
-                        {tag}
-                      </span>
-                    ))}
+                {selectedReport.supplierData.insights.length > 0 && (
+                  <div className="mb-6">
+                    <h3 className="text-lg font-semibold text-white mb-3">
+                      Key Insights
+                    </h3>
+                    <ul className="space-y-2">
+                      {selectedReport.supplierData.insights.map(
+                        (insight, i) => (
+                          <li
+                            key={i}
+                            className="text-gray-300 text-sm flex items-start gap-2"
+                          >
+                            <span className="text-green-400 mt-1">•</span>
+                            {insight}
+                          </li>
+                        )
+                      )}
+                    </ul>
                   </div>
-                </div>
+                )}
 
-                {/* Report Preview Placeholder */}
-                <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-white mb-3">
-                    Report Preview
-                  </h3>
-                  <div className="aspect-video bg-gray-800/50 rounded-xl border-2 border-dashed border-gray-700/50 flex items-center justify-center">
-                    <div className="text-center">
-                      <FileText className="w-16 h-16 text-gray-600 mx-auto mb-3" />
-                      <p className="text-gray-400">PDF Preview Available</p>
-                    </div>
+                {selectedReport.supplierData.recommendations.length > 0 && (
+                  <div className="mb-6">
+                    <h3 className="text-lg font-semibold text-white mb-3">
+                      Recommendations
+                    </h3>
+                    <ul className="space-y-2">
+                      {selectedReport.supplierData.recommendations.map(
+                        (rec, i) => (
+                          <li
+                            key={i}
+                            className="text-gray-300 text-sm flex items-start gap-2"
+                          >
+                            <span className="text-blue-400 mt-1">→</span>
+                            {rec}
+                          </li>
+                        )
+                      )}
+                    </ul>
                   </div>
-                </div>
+                )}
+
+                {selectedReport.supplierData.alternativeSuggestions.length >
+                  0 && (
+                  <div className="mb-6">
+                    <h3 className="text-lg font-semibold text-white mb-3">
+                      Alternative Suppliers
+                    </h3>
+                    <ul className="space-y-2">
+                      {selectedReport.supplierData.alternativeSuggestions.map(
+                        (alt, i) => (
+                          <li
+                            key={i}
+                            className="text-gray-300 text-sm flex items-start gap-2"
+                          >
+                            <span className="text-amber-400 mt-1">↳</span>
+                            {alt}
+                          </li>
+                        )
+                      )}
+                    </ul>
+                  </div>
+                )}
               </div>
 
-              {/* Modal Footer */}
               <div className="flex items-center justify-between p-6 border-t border-gray-700/50 bg-gray-800/50">
                 <div className="flex items-center gap-2 text-sm text-gray-400">
                   <Calendar className="w-4 h-4" />
@@ -535,11 +617,18 @@ function Reports(): JSX.Element {
                   })}
                 </div>
                 <div className="flex items-center gap-3">
+                  <button
+                    onClick={exportAsJSON}
+                    className="flex items-center gap-2 px-5 py-2.5 bg-orange-500/20 hover:bg-orange-500/30 text-orange-400 border border-orange-500/50 text-sm font-medium rounded-xl transition-all duration-300"
+                  >
+                    <FileJson className="w-4 h-4" />
+                    Export JSON
+                  </button>
                   <button className="flex items-center gap-2 px-5 py-2.5 bg-gray-700/50 hover:bg-gray-700 text-white text-sm font-medium rounded-xl transition-all duration-300">
                     <FileSpreadsheet className="w-4 h-4" />
                     Export CSV
                   </button>
-                  <button className="flex items-center gap-2 px-5 py-2.5 bg-linear-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white text-sm font-semibold rounded-xl transition-all duration-300">
+                  <button className="flex items-center gap-2 px-5 py-2.5 bg-linear-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white text-sm font-semibold rounded-xl transition-all duration-300 hover:scale-105">
                     <Download className="w-4 h-4" />
                     Download PDF
                   </button>

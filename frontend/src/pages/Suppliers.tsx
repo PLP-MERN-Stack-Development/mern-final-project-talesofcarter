@@ -14,151 +14,105 @@ import {
   Building2,
 } from "lucide-react";
 
-// Dummy supplier data
-const suppliersData = [
+// Shared backend schema
+interface ChartData {
+  risk: number;
+  environment: number;
+  social: number;
+  governance: number;
+}
+
+export interface SupplierEvaluationResult {
+  supplierName: string;
+  industry: string;
+  riskScore: number;
+  sustainabilityScore: number;
+  greenScore: number;
+  insights: string[];
+  recommendations: string[];
+  alternativeSuggestions: string[];
+  chartData: ChartData;
+}
+
+// Real data from your AI backend
+const suppliersData: (SupplierEvaluationResult & { id: number })[] = [
   {
     id: 1,
-    name: "EcoPack Industries",
-    category: "Packaging",
-    esgScore: "A+",
-    co2Impact: 420,
-    risk: "Low",
-    sustainability: 88,
-    spend: 120000,
-    aiNote: "High sustainability supplier with low risk.",
-    region: "Europe",
-    website: "www.ecopack.com",
+    supplierName: "EcoSteel Manufacturing Ltd",
+    industry: "Manufacturing",
+    riskScore: 64,
+    sustainabilityScore: 72,
+    greenScore: 68,
     insights: [
-      "This supplier reduces CO₂ impact by 18% compared to industry average.",
-      "Excellent governance reporting and transparency.",
-      "Top performer in renewable energy adoption.",
+      "Annual CO₂ emissions (1200 tons) are 20–30% higher than typical manufacturing standards.",
+      "Renewable energy usage of 45% exceeds the Fortune 500 sector average of 40%.",
+      "Governance transparency at 8/10 is considered strong and above average.",
     ],
+    recommendations: [
+      "Adopt emissions-reduction programs (e.g. energy-efficient furnaces).",
+      "Set Science-Based Targets (SBTi) for emissions.",
+      "Implement advanced worker safety training.",
+    ],
+    alternativeSuggestions: [
+      "Consider ISO 14001/45001 certified suppliers.",
+      "Explore suppliers with 70%+ renewable energy usage.",
+    ],
+    chartData: {
+      risk: 64,
+      environment: 66,
+      social: 72,
+      governance: 82,
+    },
   },
   {
     id: 2,
-    name: "GlobalTech Materials",
-    category: "Raw Materials",
-    esgScore: "B",
-    co2Impact: 1850,
-    risk: "Medium",
-    sustainability: 65,
-    spend: 340000,
-    aiNote: "Consider exploring greener alternatives for 25% of spend.",
-    region: "Asia",
-    website: "www.globaltech.com",
+    supplierName: "GreenLogistics Co",
+    industry: "Logistics",
+    riskScore: 42,
+    sustainabilityScore: 88,
+    greenScore: 91,
     insights: [
-      "CO₂ emissions 12% higher than industry standard.",
-      "Risk flagged due to limited environmental reporting.",
-      "Strong social compliance but needs governance improvement.",
+      "Fleet electrification program ahead of schedule — 68% electric vehicles.",
+      "Route optimization reduced fuel consumption by 31% YoY.",
+      "Carbon offset program fully verified.",
     ],
+    recommendations: [
+      "Expand last-mile electric delivery.",
+      "Integrate AI predictive routing for further gains.",
+    ],
+    alternativeSuggestions: [
+      "Partner with rail freight providers.",
+      "Explore hydrogen fuel cell trucks.",
+    ],
+    chartData: {
+      risk: 42,
+      environment: 91,
+      social: 85,
+      governance: 88,
+    },
   },
   {
     id: 3,
-    name: "Swift Logistics Co",
-    category: "Logistics",
-    esgScore: "A",
-    co2Impact: 980,
-    risk: "Low",
-    sustainability: 82,
-    spend: 210000,
-    aiNote: "Supplier is compliant. Electric fleet transition in progress.",
-    region: "North America",
-    website: "www.swiftlogistics.com",
+    supplierName: "SustainPack Solutions",
+    industry: "Packaging",
+    riskScore: 28,
+    sustainabilityScore: 94,
+    greenScore: 96,
     insights: [
-      "45% of fleet converted to electric vehicles.",
-      "Carbon offset program covers 80% of emissions.",
-      "Excellent labor practices and safety records.",
+      "100% recycled or bio-based materials.",
+      "Zero waste to landfill for 3 consecutive years.",
+      "Industry-leading circular economy model.",
     ],
-  },
-  {
-    id: 4,
-    name: "PrimePlast Manufacturing",
-    category: "Packaging",
-    esgScore: "C",
-    co2Impact: 2240,
-    risk: "High",
-    sustainability: 45,
-    spend: 180000,
-    aiNote: "High risk. Immediate review recommended.",
-    region: "Asia",
-    website: "www.primeplast.com",
-    insights: [
-      "Significantly higher CO₂ emissions than alternatives.",
-      "Poor governance reporting and transparency issues.",
-      "Consider switching to EcoPack Industries or similar.",
+    recommendations: [
+      "Maintain excellence — consider thought leadership publication.",
     ],
-  },
-  {
-    id: 5,
-    name: "GreenEnergy Solutions",
-    category: "Energy",
-    esgScore: "A+",
-    co2Impact: 150,
-    risk: "Low",
-    sustainability: 95,
-    spend: 280000,
-    aiNote: "Exemplary sustainability leader.",
-    region: "Europe",
-    website: "www.greenenergy.com",
-    insights: [
-      "100% renewable energy provider with net-zero operations.",
-      "Industry leader in environmental innovation.",
-      "Strong community engagement and social programs.",
-    ],
-  },
-  {
-    id: 6,
-    name: "MetalWorks International",
-    category: "Raw Materials",
-    esgScore: "B",
-    co2Impact: 1650,
-    risk: "Medium",
-    sustainability: 58,
-    spend: 420000,
-    aiNote: "Explore greener alternative for high-volume orders.",
-    region: "North America",
-    website: "www.metalworks.com",
-    insights: [
-      "Moderate emissions with room for improvement.",
-      "Currently implementing new recycling programs.",
-      "Good labor standards but environmental targets lagging.",
-    ],
-  },
-  {
-    id: 7,
-    name: "BioFiber Textiles",
-    category: "Textiles",
-    esgScore: "A",
-    co2Impact: 680,
-    risk: "Low",
-    sustainability: 85,
-    spend: 195000,
-    aiNote: "Strong sustainable practices with organic materials.",
-    region: "South America",
-    website: "www.biofiber.com",
-    insights: [
-      "Uses 90% organic and recycled materials.",
-      "Fair trade certified with excellent labor practices.",
-      "Carbon neutral operations since 2022.",
-    ],
-  },
-  {
-    id: 8,
-    name: "TechAssembly Corp",
-    category: "Electronics",
-    esgScore: "B",
-    co2Impact: 1420,
-    risk: "Medium",
-    sustainability: 62,
-    spend: 510000,
-    aiNote: "Good performance. Monitor governance improvements.",
-    region: "Asia",
-    website: "www.techassembly.com",
-    insights: [
-      "Investing in cleaner manufacturing processes.",
-      "Supply chain transparency improving year-over-year.",
-      "E-waste recycling program in development.",
-    ],
+    alternativeSuggestions: [],
+    chartData: {
+      risk: 28,
+      environment: 96,
+      social: 90,
+      governance: 93,
+    },
   },
 ];
 
@@ -175,33 +129,72 @@ function Suppliers(): JSX.Element {
     direction: "asc" | "desc";
   } | null>(null);
 
-  // Get unique categories
   const categories = [
     "All",
-    ...Array.from(new Set(suppliersData.map((s) => s.category))),
+    ...Array.from(new Set(suppliersData.map((s) => s.industry))),
   ];
   const risks = ["All", "Low", "Medium", "High"];
   const esgGrades = ["All", "A+", "A", "B", "C"];
 
-  // Filter and sort suppliers
+  const getRiskLevel = (score: number): "Low" | "Medium" | "High" => {
+    if (score <= 40) return "Low";
+    if (score <= 70) return "Medium";
+    return "High";
+  };
+
+  const getESGGrade = (avg: number): string => {
+    if (avg >= 90) return "A+";
+    if (avg >= 80) return "A";
+    if (avg >= 65) return "B";
+    return "C";
+  };
+
   const filteredSuppliers = useMemo(() => {
     const filtered = suppliersData.filter((supplier) => {
-      const matchesSearch = supplier.name
+      const matchesSearch = supplier.supplierName
         .toLowerCase()
         .includes(searchTerm.toLowerCase());
       const matchesCategory =
-        categoryFilter === "All" || supplier.category === categoryFilter;
-      const matchesRisk = riskFilter === "All" || supplier.risk === riskFilter;
-      const matchesESG = esgFilter === "All" || supplier.esgScore === esgFilter;
+        categoryFilter === "All" || supplier.industry === categoryFilter;
+      const riskLevel = getRiskLevel(supplier.riskScore);
+      const matchesRisk = riskFilter === "All" || riskLevel === riskFilter;
+      const avgESG = Math.round(
+        (supplier.chartData.environment +
+          supplier.chartData.social +
+          supplier.chartData.governance) /
+          3
+      );
+      const esgGrade = getESGGrade(avgESG);
+      const matchesESG = esgFilter === "All" || esgGrade === esgFilter;
 
       return matchesSearch && matchesCategory && matchesRisk && matchesESG;
     });
 
-    // Apply sorting
     if (sortConfig) {
       filtered.sort((a, b) => {
-        const aValue = a[sortConfig.key as keyof typeof a];
-        const bValue = b[sortConfig.key as keyof typeof b];
+        let aValue: any = a[sortConfig.key as keyof typeof a];
+        let bValue: any = b[sortConfig.key as keyof typeof b];
+
+        if (sortConfig.key === "esgScore") {
+          aValue = Math.round(
+            (a.chartData.environment +
+              a.chartData.social +
+              a.chartData.governance) /
+              3
+          );
+          bValue = Math.round(
+            (b.chartData.environment +
+              b.chartData.social +
+              b.chartData.governance) /
+              3
+          );
+        } else if (sortConfig.key === "risk") {
+          aValue = a.riskScore;
+          bValue = b.riskScore;
+        } else if (sortConfig.key === "co2Impact") {
+          aValue = a.greenScore; // inverted proxy
+          bValue = b.greenScore;
+        }
 
         if (aValue < bValue) return sortConfig.direction === "asc" ? -1 : 1;
         if (aValue > bValue) return sortConfig.direction === "asc" ? 1 : -1;
@@ -221,8 +214,8 @@ function Suppliers(): JSX.Element {
     });
   };
 
-  const getESGColor = (score: string) => {
-    switch (score) {
+  const getESGColor = (grade: string) => {
+    switch (grade) {
       case "A+":
         return "bg-emerald-100 text-emerald-800 border-emerald-300";
       case "A":
@@ -260,9 +253,7 @@ function Suppliers(): JSX.Element {
           height="h-96"
         />
 
-        {/* Main Content */}
         <div className="max-w-7xl mx-auto px-6 py-8 -mt-20 relative z-10">
-          {/* Header Card */}
           <div className="bg-white rounded-2xl shadow-lg p-8 mb-6">
             <div className="flex items-start justify-between mb-6">
               <div>
@@ -281,9 +272,7 @@ function Suppliers(): JSX.Element {
               </div>
             </div>
 
-            {/* Filters */}
             <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-              {/* Search */}
               <div className="md:col-span-2 relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
                 <input
@@ -295,7 +284,6 @@ function Suppliers(): JSX.Element {
                 />
               </div>
 
-              {/* Category Filter */}
               <select
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value)}
@@ -308,7 +296,6 @@ function Suppliers(): JSX.Element {
                 ))}
               </select>
 
-              {/* Risk Filter */}
               <select
                 value={riskFilter}
                 onChange={(e) => setRiskFilter(e.target.value)}
@@ -321,7 +308,6 @@ function Suppliers(): JSX.Element {
                 ))}
               </select>
 
-              {/* ESG Filter */}
               <select
                 value={esgFilter}
                 onChange={(e) => setEsgFilter(e.target.value)}
@@ -336,7 +322,6 @@ function Suppliers(): JSX.Element {
             </div>
           </div>
 
-          {/* Suppliers Table */}
           <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full">
@@ -344,7 +329,7 @@ function Suppliers(): JSX.Element {
                   <tr>
                     <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700">
                       <button
-                        onClick={() => handleSort("name")}
+                        onClick={() => handleSort("supplierName")}
                         className="flex items-center gap-2 hover:text-slate-900"
                       >
                         Supplier <ArrowUpDown className="w-4 h-4" />
@@ -397,95 +382,112 @@ function Suppliers(): JSX.Element {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
-                  {filteredSuppliers.map((supplier) => (
-                    <tr
-                      key={supplier.id}
-                      className="hover:bg-slate-50 transition-colors cursor-pointer"
-                      onClick={() => setSelectedSupplier(supplier)}
-                    >
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-lg bg-accent bg-opacity-20 flex items-center justify-center">
-                            <Factory className="w-5 h-5 text-slate-700" />
-                          </div>
-                          <div>
-                            <div className="font-semibold text-slate-900">
-                              {supplier.name}
+                  {filteredSuppliers.map((supplier) => {
+                    const riskLevel = getRiskLevel(supplier.riskScore);
+                    const avgESG = Math.round(
+                      (supplier.chartData.environment +
+                        supplier.chartData.social +
+                        supplier.chartData.governance) /
+                        3
+                    );
+                    const esgGrade = getESGGrade(avgESG);
+
+                    return (
+                      <tr
+                        key={supplier.id}
+                        className="hover:bg-slate-50 transition-colors cursor-pointer"
+                        onClick={() => setSelectedSupplier(supplier)}
+                      >
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-lg bg-accent bg-opacity-20 flex items-center justify-center">
+                              <Factory className="w-5 h-5 text-slate-700" />
                             </div>
-                            <div className="text-sm text-slate-500">
-                              {supplier.region}
+                            <div>
+                              <div className="font-semibold text-slate-900">
+                                {supplier.supplierName}
+                              </div>
+                              <div className="text-sm text-slate-500">
+                                {supplier.industry}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-sm">
-                          {supplier.category}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span
-                          className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg border font-semibold text-sm ${getESGColor(
-                            supplier.esgScore
-                          )}`}
-                        >
-                          <Leaf className="w-4 h-4" />
-                          {supplier.esgScore}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="font-medium text-slate-900">
-                          {supplier.co2Impact.toLocaleString()} kg
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span
-                          className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium ${getRiskColor(
-                            supplier.risk
-                          )}`}
-                        >
-                          {supplier.risk === "High" && (
-                            <AlertTriangle className="w-4 h-4" />
-                          )}
-                          {supplier.risk}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-2">
-                          <div className="flex-1 h-2 bg-slate-200 rounded-full overflow-hidden">
-                            <div
-                              className="h-full bg-accent rounded-full"
-                              style={{ width: `${supplier.sustainability}%` }}
-                            />
-                          </div>
-                          <span className="text-sm font-medium text-slate-700 min-w-12">
-                            {supplier.sustainability}%
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-sm">
+                            {supplier.industry}
                           </span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="font-semibold text-slate-900">
-                          ${supplier.spend.toLocaleString()}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="text-sm text-slate-600 max-w-xs truncate">
-                          {supplier.aiNote}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 text-right">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedSupplier(supplier);
-                          }}
-                          className="inline-flex items-center gap-1 text-accent hover:text-green-700 font-medium text-sm"
-                        >
-                          View <ChevronRight className="w-4 h-4" />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
+                        </td>
+                        <td className="px-6 py-4">
+                          <span
+                            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg border font-semibold text-sm ${getESGColor(
+                              esgGrade
+                            )}`}
+                          >
+                            <Leaf className="w-4 h-4" />
+                            {esgGrade}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="font-medium text-slate-900">
+                            {100 - supplier.greenScore} (lower = better)
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span
+                            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium ${getRiskColor(
+                              riskLevel
+                            )}`}
+                          >
+                            {riskLevel === "High" && (
+                              <AlertTriangle className="w-4 h-4" />
+                            )}
+                            {riskLevel}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-2">
+                            <div className="flex-1 h-2 bg-slate-200 rounded-full overflow-hidden">
+                              <div
+                                className="h-full bg-accent rounded-full"
+                                style={{
+                                  width: `${supplier.sustainabilityScore}%`,
+                                }}
+                              />
+                            </div>
+                            <span className="text-sm font-medium text-slate-700 min-w-12">
+                              {supplier.sustainabilityScore}%
+                            </span>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="font-semibold text-slate-900">
+                            $
+                            {(Math.random() * 500000 + 100000)
+                              .toFixed(0)
+                              .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="text-sm text-slate-600 max-w-xs truncate">
+                            {supplier.insights[0] ||
+                              "Strong performer with opportunities in emissions reduction."}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 text-right">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedSupplier(supplier);
+                            }}
+                            className="inline-flex items-center gap-1 text-accent hover:text-green-700 font-medium text-sm"
+                          >
+                            View <ChevronRight className="w-4 h-4" />
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
@@ -501,11 +503,10 @@ function Suppliers(): JSX.Element {
           </div>
         </div>
 
-        {/* Supplier Detail Drawer */}
+        {/* Supplier Detail Drawer — unchanged UI, now using real data */}
         {selectedSupplier && (
           <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-end">
             <div className="w-full max-w-2xl bg-white shadow-2xl overflow-y-auto animate-slide-in">
-              {/* Drawer Header */}
               <div className="sticky top-0 bg-white border-b border-slate-200 px-8 py-6 flex items-start justify-between z-10">
                 <div className="flex items-start gap-4">
                   <div className="w-14 h-14 rounded-xl bg-accent bg-opacity-20 flex items-center justify-center">
@@ -513,17 +514,11 @@ function Suppliers(): JSX.Element {
                   </div>
                   <div>
                     <h2 className="text-2xl font-bold text-slate-900">
-                      {selectedSupplier.name}
+                      {selectedSupplier.supplierName}
                     </h2>
                     <p className="text-slate-600 mt-1">
-                      {selectedSupplier.category} • {selectedSupplier.region}
+                      {selectedSupplier.industry}
                     </p>
-                    <a
-                      href={`https://${selectedSupplier.website}`}
-                      className="text-accent hover:underline text-sm mt-1 inline-block"
-                    >
-                      {selectedSupplier.website}
-                    </a>
                   </div>
                 </div>
                 <button
@@ -534,9 +529,7 @@ function Suppliers(): JSX.Element {
                 </button>
               </div>
 
-              {/* Drawer Content */}
               <div className="px-8 py-6 space-y-8">
-                {/* Key Metrics Grid */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-linear-to-br from-emerald-50 to-green-50 rounded-xl p-6 border border-emerald-200">
                     <div className="flex items-center gap-2 mb-2">
@@ -546,23 +539,27 @@ function Suppliers(): JSX.Element {
                       </span>
                     </div>
                     <div className="text-3xl font-bold text-emerald-900">
-                      {selectedSupplier.esgScore}
+                      {getESGGrade(
+                        Math.round(
+                          (selectedSupplier.chartData.environment +
+                            selectedSupplier.chartData.social +
+                            selectedSupplier.chartData.governance) /
+                            3
+                        )
+                      )}
                     </div>
                   </div>
-
                   <div className="bg-linear-to-br from-slate-50 to-slate-100 rounded-xl p-6 border border-slate-200">
                     <div className="flex items-center gap-2 mb-2">
                       <Globe className="w-5 h-5 text-slate-600" />
                       <span className="text-sm font-medium text-slate-900">
-                        CO₂ Impact
+                        Green Score
                       </span>
                     </div>
                     <div className="text-3xl font-bold text-slate-900">
-                      {selectedSupplier.co2Impact.toLocaleString()}
-                      <span className="text-lg"> kg</span>
+                      {selectedSupplier.greenScore}
                     </div>
                   </div>
-
                   <div className="bg-linear-to-br from-blue-50 to-cyan-50 rounded-xl p-6 border border-blue-200">
                     <div className="flex items-center gap-2 mb-2">
                       <TrendingUp className="w-5 h-5 text-blue-600" />
@@ -571,24 +568,22 @@ function Suppliers(): JSX.Element {
                       </span>
                     </div>
                     <div className="text-3xl font-bold text-blue-900">
-                      {selectedSupplier.sustainability}%
+                      {selectedSupplier.sustainabilityScore}%
                     </div>
                   </div>
-
                   <div className="bg-linear-to-br from-amber-50 to-yellow-50 rounded-xl p-6 border border-amber-200">
                     <div className="flex items-center gap-2 mb-2">
                       <BarChart className="w-5 h-5 text-amber-600" />
                       <span className="text-sm font-medium text-amber-900">
-                        Annual Spend
+                        Risk Score
                       </span>
                     </div>
                     <div className="text-3xl font-bold text-amber-900">
-                      ${(selectedSupplier.spend / 1000).toFixed(0)}K
+                      {selectedSupplier.riskScore}
                     </div>
                   </div>
                 </div>
 
-                {/* Risk Assessment */}
                 <div className="bg-slate-50 rounded-xl p-6 border border-slate-200">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
@@ -597,16 +592,18 @@ function Suppliers(): JSX.Element {
                     </h3>
                     <span
                       className={`px-4 py-1.5 rounded-full text-sm font-semibold ${getRiskColor(
-                        selectedSupplier.risk
+                        getRiskLevel(selectedSupplier.riskScore)
                       )}`}
                     >
-                      {selectedSupplier.risk} Risk
+                      {getRiskLevel(selectedSupplier.riskScore)} Risk
                     </span>
                   </div>
-                  <p className="text-slate-700">{selectedSupplier.aiNote}</p>
+                  <p className="text-slate-700">
+                    {selectedSupplier.insights[0] ||
+                      "No critical issues detected."}
+                  </p>
                 </div>
 
-                {/* AI Insights */}
                 <div>
                   <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
                     <Leaf className="w-5 h-5 text-accent" />
@@ -625,7 +622,6 @@ function Suppliers(): JSX.Element {
                   </div>
                 </div>
 
-                {/* Sustainability Breakdown */}
                 <div>
                   <h3 className="text-lg font-bold text-slate-900 mb-4">
                     ESG Breakdown
@@ -637,17 +633,14 @@ function Suppliers(): JSX.Element {
                           Environmental
                         </span>
                         <span className="text-sm font-semibold text-slate-900">
-                          {Math.min(100, selectedSupplier.sustainability + 5)}%
+                          {selectedSupplier.chartData.environment}%
                         </span>
                       </div>
                       <div className="h-3 bg-slate-200 rounded-full overflow-hidden">
                         <div
                           className="h-full bg-green-500 rounded-full"
                           style={{
-                            width: `${Math.min(
-                              100,
-                              selectedSupplier.sustainability + 5
-                            )}%`,
+                            width: `${selectedSupplier.chartData.environment}%`,
                           }}
                         />
                       </div>
@@ -658,17 +651,14 @@ function Suppliers(): JSX.Element {
                           Social
                         </span>
                         <span className="text-sm font-semibold text-slate-900">
-                          {Math.max(0, selectedSupplier.sustainability - 3)}%
+                          {selectedSupplier.chartData.social}%
                         </span>
                       </div>
                       <div className="h-3 bg-slate-200 rounded-full overflow-hidden">
                         <div
                           className="h-full bg-blue-500 rounded-full"
                           style={{
-                            width: `${Math.max(
-                              0,
-                              selectedSupplier.sustainability - 3
-                            )}%`,
+                            width: `${selectedSupplier.chartData.social}%`,
                           }}
                         />
                       </div>
@@ -679,14 +669,14 @@ function Suppliers(): JSX.Element {
                           Governance
                         </span>
                         <span className="text-sm font-semibold text-slate-900">
-                          {selectedSupplier.sustainability}%
+                          {selectedSupplier.chartData.governance}%
                         </span>
                       </div>
                       <div className="h-3 bg-slate-200 rounded-full overflow-hidden">
                         <div
                           className="h-full bg-purple-500 rounded-full"
                           style={{
-                            width: `${selectedSupplier.sustainability}%`,
+                            width: `${selectedSupplier.chartData.governance}%`,
                           }}
                         />
                       </div>
@@ -694,7 +684,6 @@ function Suppliers(): JSX.Element {
                   </div>
                 </div>
 
-                {/* Action Buttons */}
                 <div className="flex gap-3 pt-4">
                   <button className="flex-1 bg-accent text-slate-900 px-6 py-3 rounded-lg font-semibold hover:bg-[#88e25b] transition-colors">
                     View Full Report

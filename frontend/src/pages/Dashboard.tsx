@@ -1,12 +1,10 @@
-import { type JSX, useState } from "react";
+import { type JSX, useState, useEffect } from "react";
 import Banner from "../components/Banner";
 import {
   Leaf,
   Factory,
   AlertTriangle,
-  Lightbulb,
   Users,
-  DollarSign,
   Calendar,
   Filter,
   Download,
@@ -15,7 +13,7 @@ import {
   Target,
   Shield,
   Zap,
-  Globe,
+  TrendingUp,
 } from "lucide-react";
 import {
   LineChart,
@@ -50,163 +48,273 @@ interface MetricCard {
 
 interface SupplierData {
   name: string;
-  co2: string;
-  risk: "High" | "Medium" | "Low";
-  category: string;
-  score: number;
+  industry: string;
+  riskScore: number;
+  sustainabilityScore: number;
+  greenScore: number;
+  riskLevel: "High" | "Medium" | "Low";
   lastUpdated: string;
 }
 
 function Dashboard(): JSX.Element {
   const [dateFilter, setDateFilter] = useState("30d");
   const [categoryFilter, setCategoryFilter] = useState("all");
+  const [suppliers, setSuppliers] = useState<SupplierData[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Mock data for demonstration
+  const mockSuppliers: SupplierData[] = [
+    {
+      name: "EcoMaterials Inc.",
+      industry: "Manufacturing",
+      riskScore: 25,
+      sustainabilityScore: 92,
+      greenScore: 88,
+      riskLevel: "Low",
+      lastUpdated: "2 days ago",
+    },
+    {
+      name: "GreenLogistics Co.",
+      industry: "Logistics",
+      riskScore: 55,
+      sustainabilityScore: 78,
+      greenScore: 72,
+      riskLevel: "Medium",
+      lastUpdated: "1 week ago",
+    },
+    {
+      name: "SustainSupply Ltd.",
+      industry: "Retail",
+      riskScore: 30,
+      sustainabilityScore: 88,
+      greenScore: 85,
+      riskLevel: "Low",
+      lastUpdated: "3 days ago",
+    },
+    {
+      name: "GlobalParts Corp.",
+      industry: "Manufacturing",
+      riskScore: 72,
+      sustainabilityScore: 65,
+      greenScore: 60,
+      riskLevel: "High",
+      lastUpdated: "5 days ago",
+    },
+    {
+      name: "LocalServices Pro",
+      industry: "Services",
+      riskScore: 20,
+      sustainabilityScore: 95,
+      greenScore: 93,
+      riskLevel: "Low",
+      lastUpdated: "1 day ago",
+    },
+  ];
+
+  useEffect(() => {
+    // Fetch supplier evaluations from API
+    const fetchSuppliers = async () => {
+      try {
+        const response = await fetch("/api/suppliers/evaluations");
+        if (response.ok) {
+          const data = await response.json();
+          setSuppliers(data);
+        } else {
+          setSuppliers(mockSuppliers);
+        }
+      } catch (error) {
+        console.error("Error fetching suppliers:", error);
+        setSuppliers(mockSuppliers);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSuppliers();
+  }, [dateFilter, categoryFilter]);
+
+  // Calculate aggregate metrics
+  const calculateMetrics = () => {
+    const totalSuppliers = suppliers.length || mockSuppliers.length;
+    const data = suppliers.length > 0 ? suppliers : mockSuppliers;
+
+    const avgSustainability = Math.round(
+      data.reduce((sum, s) => sum + s.sustainabilityScore, 0) / totalSuppliers
+    );
+
+    const avgGreenScore = Math.round(
+      data.reduce((sum, s) => sum + s.greenScore, 0) / totalSuppliers
+    );
+
+    const lowRiskCount = data.filter((s) => s.riskLevel === "Low").length;
+    const highRiskCount = data.filter((s) => s.riskLevel === "High").length;
+
+    const avgRiskScore = Math.round(
+      data.reduce((sum, s) => sum + s.riskScore, 0) / totalSuppliers
+    );
+
+    return {
+      avgSustainability,
+      avgGreenScore,
+      lowRiskCount,
+      highRiskCount,
+      totalSuppliers,
+      avgRiskScore,
+    };
+  };
+
+  const stats = calculateMetrics();
 
   // Metrics Cards Data
   const metrics: MetricCard[] = [
     {
-      title: "CO₂ Reduction",
-      value: "24.5%",
-      change: "+12.3%",
-      trend: "down",
+      title: "Avg Sustainability",
+      value: `${stats.avgSustainability}/100`,
+      change: "+5.2%",
+      trend: "up",
       icon: <Leaf className="w-6 h-6" />,
       gradient: "from-emerald-500 to-teal-600",
       description: "vs last quarter",
     },
     {
-      title: "Sustainable Suppliers",
-      value: "18/24",
-      change: "+3",
+      title: "Low Risk Suppliers",
+      value: `${stats.lowRiskCount}/${stats.totalSuppliers}`,
+      change: "+2",
       trend: "up",
-      icon: <Users className="w-6 h-6" />,
+      icon: <Shield className="w-6 h-6" />,
       gradient: "from-blue-500 to-cyan-600",
-      description: "75% compliance",
+      description: `${Math.round(
+        (stats.lowRiskCount / stats.totalSuppliers) * 100
+      )}% safe`,
     },
     {
-      title: "Spend Analyzed",
-      value: "$845K",
+      title: "Total Evaluations",
+      value: stats.totalSuppliers.toString(),
       change: "+18.2%",
       trend: "up",
-      icon: <DollarSign className="w-6 h-6" />,
+      icon: <Factory className="w-6 h-6" />,
       gradient: "from-purple-500 to-pink-600",
-      description: "total procurement",
+      description: "suppliers analyzed",
     },
     {
-      title: "AI Insights",
-      value: "127",
-      change: "+45",
+      title: "Avg Green Score",
+      value: `${stats.avgGreenScore}/100`,
+      change: "+7.5",
       trend: "up",
-      icon: <Lightbulb className="w-6 h-6" />,
-      gradient: "from-amber-500 to-orange-600",
-      description: "recommendations",
+      icon: <Target className="w-6 h-6" />,
+      gradient: "from-green-500 to-emerald-600",
+      description: "environmental",
     },
     {
-      title: "Risk Alerts",
-      value: "8",
-      change: "-4",
+      title: "High Risk Alerts",
+      value: stats.highRiskCount.toString(),
+      change: "-2",
       trend: "down",
       icon: <AlertTriangle className="w-6 h-6" />,
       gradient: "from-red-500 to-rose-600",
       description: "active warnings",
     },
     {
-      title: "Green Alternatives",
-      value: "34",
-      change: "+12",
-      trend: "up",
-      icon: <Target className="w-6 h-6" />,
-      gradient: "from-green-500 to-emerald-600",
-      description: "opportunities",
+      title: "Avg Risk Score",
+      value: `${stats.avgRiskScore}/100`,
+      change: "-8.3%",
+      trend: "down",
+      icon: <TrendingUp className="w-6 h-6" />,
+      gradient: "from-amber-500 to-orange-600",
+      description: "lower is better",
     },
   ];
 
-  // CO₂ Emissions Trend Data
-  const co2Data = [
-    { month: "Jan", emissions: 2800, target: 2500 },
-    { month: "Feb", emissions: 2650, target: 2400 },
-    { month: "Mar", emissions: 2550, target: 2300 },
-    { month: "Apr", emissions: 2400, target: 2200 },
-    { month: "May", emissions: 2300, target: 2100 },
-    { month: "Jun", emissions: 2150, target: 2000 },
+  // Sustainability Trend Data (mock trend over 6 months)
+  const sustainabilityTrendData = [
+    { month: "Jan", score: 72, target: 75 },
+    { month: "Feb", score: 75, target: 77 },
+    { month: "Mar", score: 78, target: 79 },
+    { month: "Apr", score: 80, target: 81 },
+    { month: "May", score: 83, target: 83 },
+    { month: "Jun", score: stats.avgSustainability, target: 85 },
   ];
 
-  // Spend Distribution Data
-  const spendData = [
-    { category: "Raw Materials", amount: 285000, color: "#10b981" },
-    { category: "Logistics", amount: 195000, color: "#3b82f6" },
-    { category: "Office Supplies", amount: 145000, color: "#8b5cf6" },
-    { category: "Services", amount: 125000, color: "#f59e0b" },
-    { category: "Equipment", amount: 95000, color: "#ef4444" },
-  ];
+  // Industry Distribution Data
+  const industryData = (() => {
+    const data = suppliers.length > 0 ? suppliers : mockSuppliers;
+    const industries = data.reduce((acc, supplier) => {
+      acc[supplier.industry] = (acc[supplier.industry] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
 
-  // Supplier ESG Scores (Radar Chart)
-  const esgData = [
-    { category: "Environmental", score: 85 },
-    { category: "Social", score: 78 },
-    { category: "Governance", score: 92 },
-    { category: "Ethics", score: 88 },
-    { category: "Innovation", score: 75 },
-    { category: "Compliance", score: 90 },
-  ];
+    const colors = ["#10b981", "#3b82f6", "#8b5cf6", "#f59e0b", "#ef4444"];
+    return Object.entries(industries).map(([industry, count], index) => ({
+      category: industry,
+      count,
+      color: colors[index % colors.length],
+    }));
+  })();
 
-  // Supplier Diversity Data (Pie Chart)
-  const diversityData = [
-    { name: "Women-owned", value: 30, color: "#ec4899" },
-    { name: "Minority-owned", value: 25, color: "#8b5cf6" },
-    { name: "Local", value: 35, color: "#10b981" },
-    { name: "International", value: 10, color: "#3b82f6" },
-  ];
+  // ESG Scores (Average across all suppliers)
+  const esgData = (() => {
+    const data = suppliers.length > 0 ? suppliers : mockSuppliers;
+    const avgEnvironment = Math.round(
+      data.reduce((sum, s) => sum + s.greenScore, 0) / data.length
+    );
+    const avgSocial = Math.round(
+      data.reduce((sum, s) => sum + s.sustainabilityScore * 0.85, 0) /
+        data.length
+    );
+    const avgGovernance = Math.round(
+      data.reduce((sum, s) => sum + s.sustainabilityScore * 0.95, 0) /
+        data.length
+    );
 
-  // Risk Categories Data (Bar Chart)
-  const riskData = [
-    { category: "Supply Chain", high: 3, medium: 8, low: 15 },
-    { category: "Financial", high: 2, medium: 5, low: 18 },
-    { category: "Compliance", high: 1, medium: 4, low: 20 },
-    { category: "Environmental", high: 2, medium: 6, low: 17 },
-  ];
+    return [
+      { category: "Environmental", score: avgEnvironment },
+      { category: "Social", score: avgSocial },
+      { category: "Governance", score: avgGovernance },
+      {
+        category: "Risk Management",
+        score: Math.round(100 - stats.avgRiskScore),
+      },
+      { category: "Compliance", score: 88 },
+      { category: "Innovation", score: 75 },
+    ];
+  })();
 
-  // Supplier Table Data
-  const supplierData: SupplierData[] = [
-    {
-      name: "EcoMaterials Inc.",
-      co2: "450 kg",
-      risk: "Low",
-      category: "Raw Materials",
-      score: 92,
-      lastUpdated: "2 days ago",
-    },
-    {
-      name: "GreenLogistics Co.",
-      co2: "680 kg",
-      risk: "Medium",
-      category: "Logistics",
-      score: 78,
-      lastUpdated: "1 week ago",
-    },
-    {
-      name: "SustainSupply Ltd.",
-      co2: "320 kg",
-      risk: "Low",
-      category: "Office Supplies",
-      score: 88,
-      lastUpdated: "3 days ago",
-    },
-    {
-      name: "GlobalParts Corp.",
-      co2: "890 kg",
-      risk: "High",
-      category: "Equipment",
-      score: 65,
-      lastUpdated: "5 days ago",
-    },
-    {
-      name: "LocalServices Pro",
-      co2: "210 kg",
-      risk: "Low",
-      category: "Services",
-      score: 95,
-      lastUpdated: "1 day ago",
-    },
-  ];
+  // Risk Distribution Data
+  const riskDistributionData = (() => {
+    const data = suppliers.length > 0 ? suppliers : mockSuppliers;
+    const industries = [...new Set(data.map((s) => s.industry))];
+
+    return industries.map((industry) => {
+      const industrySuppliers = data.filter((s) => s.industry === industry);
+      return {
+        category: industry,
+        high: industrySuppliers.filter((s) => s.riskLevel === "High").length,
+        medium: industrySuppliers.filter((s) => s.riskLevel === "Medium")
+          .length,
+        low: industrySuppliers.filter((s) => s.riskLevel === "Low").length,
+      };
+    });
+  })();
+
+  // Score Distribution (Pie Chart)
+  const scoreDistributionData = (() => {
+    const data = suppliers.length > 0 ? suppliers : mockSuppliers;
+    const excellent = data.filter((s) => s.sustainabilityScore >= 90).length;
+    const good = data.filter(
+      (s) => s.sustainabilityScore >= 75 && s.sustainabilityScore < 90
+    ).length;
+    const fair = data.filter(
+      (s) => s.sustainabilityScore >= 60 && s.sustainabilityScore < 75
+    ).length;
+    const poor = data.filter((s) => s.sustainabilityScore < 60).length;
+
+    return [
+      { name: "Excellent (90+)", value: excellent, color: "#10b981" },
+      { name: "Good (75-89)", value: good, color: "#3b82f6" },
+      { name: "Fair (60-74)", value: fair, color: "#f59e0b" },
+      { name: "Poor (<60)", value: poor, color: "#ef4444" },
+    ].filter((item) => item.value > 0);
+  })();
 
   const getRiskColor = (risk: string) => {
     switch (risk) {
@@ -220,6 +328,8 @@ function Dashboard(): JSX.Element {
         return "text-gray-400 bg-gray-500/10 border-gray-500/30";
     }
   };
+
+  const displaySuppliers = suppliers.length > 0 ? suppliers : mockSuppliers;
 
   return (
     <>
@@ -251,7 +361,7 @@ function Dashboard(): JSX.Element {
                 </span>
               </div>
               <p className="text-gray-300 text-lg">
-                Real-time insights powered by AI
+                Real-time supplier evaluation insights powered by AI
               </p>
             </div>
 
@@ -279,10 +389,11 @@ function Dashboard(): JSX.Element {
                   onChange={(e) => setCategoryFilter(e.target.value)}
                   className="bg-transparent text-sm text-white font-medium focus:outline-none cursor-pointer"
                 >
-                  <option value="all">All Categories</option>
-                  <option value="materials">Raw Materials</option>
+                  <option value="all">All Industries</option>
+                  <option value="manufacturing">Manufacturing</option>
                   <option value="logistics">Logistics</option>
                   <option value="services">Services</option>
+                  <option value="retail">Retail</option>
                 </select>
               </div>
 
@@ -346,28 +457,32 @@ function Dashboard(): JSX.Element {
 
           {/* Main Charts Section */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 mb-8">
-            {/* CO₂ Emissions Trend */}
+            {/* Sustainability Score Trend */}
             <div className="bg-linear-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-xl rounded-3xl p-6 border border-gray-700/50 shadow-2xl">
               <div className="flex items-center justify-between mb-6">
                 <div>
                   <h3 className="text-xl font-bold text-white mb-1 flex items-center gap-2">
                     <Leaf className="w-5 h-5 text-green-400" />
-                    CO₂ Emissions Trend
+                    Sustainability Trend
                   </h3>
                   <p className="text-sm text-gray-400">
-                    Monthly reduction progress
+                    Average score over time
                   </p>
                 </div>
               </div>
               <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={co2Data}>
+                <LineChart data={sustainabilityTrendData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                   <XAxis
                     dataKey="month"
                     stroke="#9ca3af"
                     style={{ fontSize: "12px" }}
                   />
-                  <YAxis stroke="#9ca3af" style={{ fontSize: "12px" }} />
+                  <YAxis
+                    stroke="#9ca3af"
+                    style={{ fontSize: "12px" }}
+                    domain={[0, 100]}
+                  />
                   <Tooltip
                     contentStyle={{
                       backgroundColor: "#1f2937",
@@ -379,12 +494,12 @@ function Dashboard(): JSX.Element {
                   <Legend />
                   <Line
                     type="monotone"
-                    dataKey="emissions"
+                    dataKey="score"
                     stroke="#10b981"
                     strokeWidth={3}
                     dot={{ fill: "#10b981", r: 5 }}
                     activeDot={{ r: 7 }}
-                    name="Actual Emissions"
+                    name="Actual Score"
                   />
                   <Line
                     type="monotone"
@@ -399,19 +514,21 @@ function Dashboard(): JSX.Element {
               </ResponsiveContainer>
             </div>
 
-            {/* Spend Distribution */}
+            {/* Industry Distribution */}
             <div className="bg-linear-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-xl rounded-3xl p-6 border border-gray-700/50 shadow-2xl">
               <div className="flex items-center justify-between mb-6">
                 <div>
                   <h3 className="text-xl font-bold text-white mb-1 flex items-center gap-2">
-                    <DollarSign className="w-5 h-5 text-blue-400" />
-                    Spend by Category
+                    <Factory className="w-5 h-5 text-blue-400" />
+                    Suppliers by Industry
                   </h3>
-                  <p className="text-sm text-gray-400">Total: $845K</p>
+                  <p className="text-sm text-gray-400">
+                    Total: {stats.totalSuppliers} suppliers
+                  </p>
                 </div>
               </div>
               <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={spendData}>
+                <BarChart data={industryData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                   <XAxis
                     dataKey="category"
@@ -429,12 +546,9 @@ function Dashboard(): JSX.Element {
                       borderRadius: "12px",
                       color: "#fff",
                     }}
-                    formatter={(value: number) =>
-                      `$${(value / 1000).toFixed(0)}K`
-                    }
                   />
-                  <Bar dataKey="amount" radius={[8, 8, 0, 0]}>
-                    {spendData.map((entry, index) => (
+                  <Bar dataKey="count" radius={[8, 8, 0, 0]} name="Suppliers">
+                    {industryData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Bar>
@@ -445,7 +559,7 @@ function Dashboard(): JSX.Element {
 
           {/* Secondary Charts Section */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 mb-8">
-            {/* Supplier ESG Scores */}
+            {/* ESG Performance */}
             <div className="bg-linear-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-xl rounded-3xl p-6 border border-gray-700/50 shadow-2xl">
               <div className="mb-6">
                 <h3 className="text-lg font-bold text-white mb-1 flex items-center gap-2">
@@ -464,7 +578,7 @@ function Dashboard(): JSX.Element {
                     stroke="#9ca3af"
                     style={{ fontSize: "11px" }}
                   />
-                  <PolarRadiusAxis stroke="#9ca3af" />
+                  <PolarRadiusAxis stroke="#9ca3af" domain={[0, 100]} />
                   <Radar
                     name="Score"
                     dataKey="score"
@@ -484,57 +598,51 @@ function Dashboard(): JSX.Element {
               </ResponsiveContainer>
             </div>
 
-            {/* Supplier Diversity */}
+            {/* Score Distribution */}
             <div className="bg-linear-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-xl rounded-3xl p-6 border border-gray-700/50 shadow-2xl">
               <div className="mb-6">
                 <h3 className="text-lg font-bold text-white mb-1 flex items-center gap-2">
-                  <Globe className="w-5 h-5 text-pink-400" />
-                  Supplier Diversity
+                  <Target className="w-5 h-5 text-pink-400" />
+                  Score Distribution
                 </h3>
-                <p className="text-sm text-gray-400">Distribution breakdown</p>
+                <p className="text-sm text-gray-400">Sustainability ratings</p>
               </div>
               <ResponsiveContainer width="100%" height={280}>
                 <PieChart>
                   <Pie
-                    data={diversityData}
+                    data={scoreDistributionData}
                     cx="50%"
                     cy="50%"
                     labelLine={false}
-                    label={({ name, percent }) =>
-                      `${name} ${((percent ?? 0) * 100).toFixed(0)}%`
+                    label={({ name = "", percent = 0 }) =>
+                      `${name.split(" ")[0] ?? "N/A"} ${(percent * 100).toFixed(
+                        0
+                      )}%`
                     }
                     outerRadius={90}
                     fill="#8884d8"
                     dataKey="value"
                   >
-                    {diversityData.map((entry, index) => (
+                    {scoreDistributionData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
-
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: "#1f2937",
-                      border: "1px solid #374151",
-                      borderRadius: "12px",
-                      color: "#fff",
-                    }}
-                  />
+                  <Tooltip />
                 </PieChart>
               </ResponsiveContainer>
             </div>
 
-            {/* Risk Categories */}
+            {/* Risk Analysis by Industry */}
             <div className="bg-linear-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-xl rounded-3xl p-6 border border-gray-700/50 shadow-2xl">
               <div className="mb-6">
                 <h3 className="text-lg font-bold text-white mb-1 flex items-center gap-2">
                   <AlertTriangle className="w-5 h-5 text-amber-400" />
                   Risk Analysis
                 </h3>
-                <p className="text-sm text-gray-400">By risk level</p>
+                <p className="text-sm text-gray-400">By industry</p>
               </div>
               <ResponsiveContainer width="100%" height={280}>
-                <BarChart data={riskData} layout="vertical">
+                <BarChart data={riskDistributionData} layout="vertical">
                   <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                   <XAxis
                     type="number"
@@ -577,15 +685,16 @@ function Dashboard(): JSX.Element {
           </div>
 
           {/* Supplier Data Table */}
+          {/* Supplier Data Table */}
           <div className="bg-linear-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-xl rounded-3xl p-6 border border-gray-700/50 shadow-2xl">
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h3 className="text-xl font-bold text-white mb-1 flex items-center gap-2">
-                  <Factory className="w-5 h-5 text-cyan-400" />
-                  Supplier Performance
+                  <Users className="w-5 h-5 text-cyan-400" />
+                  Supplier Evaluations
                 </h3>
                 <p className="text-sm text-gray-400">
-                  Recent activity and metrics
+                  Recent assessments and scores
                 </p>
               </div>
             </div>
@@ -598,16 +707,16 @@ function Dashboard(): JSX.Element {
                       Supplier
                     </th>
                     <th className="text-left py-4 px-4 text-sm font-semibold text-gray-400">
-                      CO₂ Impact
+                      Industry
                     </th>
                     <th className="text-left py-4 px-4 text-sm font-semibold text-gray-400">
                       Risk Level
                     </th>
                     <th className="text-left py-4 px-4 text-sm font-semibold text-gray-400">
-                      Category
+                      Sustainability
                     </th>
                     <th className="text-left py-4 px-4 text-sm font-semibold text-gray-400">
-                      Score
+                      Green Score
                     </th>
                     <th className="text-left py-4 px-4 text-sm font-semibold text-gray-400">
                       Last Updated
@@ -615,48 +724,67 @@ function Dashboard(): JSX.Element {
                   </tr>
                 </thead>
                 <tbody>
-                  {supplierData.map((supplier, index) => (
+                  {displaySuppliers.map((supplier, index) => (
                     <tr
                       key={index}
                       className="border-b border-gray-700/30 hover:bg-gray-700/20 transition-colors"
                     >
+                      {/* Supplier Name */}
                       <td className="py-4 px-4">
-                        <span className="text-sm font-medium text-white">
+                        <div className="font-medium text-white">
                           {supplier.name}
-                        </span>
+                        </div>
                       </td>
-                      <td className="py-4 px-4">
-                        <span className="text-sm text-gray-300">
-                          {supplier.co2}
-                        </span>
+
+                      {/* Industry */}
+                      <td className="py-4 px-4 text-sm text-gray-300">
+                        {supplier.industry}
                       </td>
+
+                      {/* Risk Level Badge */}
                       <td className="py-4 px-4">
                         <span
                           className={`inline-flex items-center px-3 py-1 text-xs font-semibold rounded-full border ${getRiskColor(
-                            supplier.risk
+                            supplier.riskLevel
                           )}`}
                         >
-                          {supplier.risk}
+                          {supplier.riskLevel}
                         </span>
                       </td>
+
+                      {/* Sustainability Score + Progress Bar */}
                       <td className="py-4 px-4">
-                        <span className="text-sm text-gray-300">
-                          {supplier.category}
-                        </span>
-                      </td>
-                      <td className="py-4 px-4">
-                        <div className="flex items-center gap-2">
-                          <div className="flex-1 bg-gray-700 rounded-full h-2 w-16">
+                        <div className="flex items-center gap-3">
+                          <div className="flex-1 bg-gray-700 rounded-full h-2 w-20">
                             <div
-                              className="bg-linear-to-r from-green-500 to-emerald-600 h-2 rounded-full"
-                              style={{ width: `${supplier.score}%` }}
+                              className="bg-linear-to-r from-green-500 to-emerald-600 h-2 rounded-full transition-all duration-500"
+                              style={{
+                                width: `${supplier.sustainabilityScore}%`,
+                              }}
                             />
                           </div>
-                          <span className="text-sm font-semibold text-white">
-                            {supplier.score}
+                          <span className="text-sm font-semibold text-white min-w-10">
+                            {supplier.sustainabilityScore}
                           </span>
                         </div>
                       </td>
+
+                      {/* Green Score + Progress Bar */}
+                      <td className="py-4 px-4">
+                        <div className="flex items-center gap-3">
+                          <div className="flex-1 bg-gray-700 rounded-full h-2 w-20">
+                            <div
+                              className="bg-linear-to-r from-emerald-500 to-teal-600 h-2 rounded-full transition-all duration-500"
+                              style={{ width: `${supplier.greenScore}%` }}
+                            />
+                          </div>
+                          <span className="text-sm font-semibold text-white min-w-10">
+                            {supplier.greenScore}
+                          </span>
+                        </div>
+                      </td>
+
+                      {/* Last Updated */}
                       <td className="py-4 px-4">
                         <span className="text-sm text-gray-400">
                           {supplier.lastUpdated}

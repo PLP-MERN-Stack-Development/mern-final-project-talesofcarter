@@ -10,7 +10,8 @@ import {
   Building,
 } from "lucide-react";
 import { FaGithub, FaGoogle } from "react-icons/fa";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router"; // Import useNavigate
+import api from "../services/api"; // Import our api instance
 
 interface SignupFormData {
   fullName: string;
@@ -24,17 +25,45 @@ interface SignupFormData {
 function Signup(): JSX.Element {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null); // State for API errors
+  const navigate = useNavigate(); // For redirecting
   const {
     register,
     handleSubmit,
     watch,
-    formState: { errors },
+    formState: { errors, isSubmitting }, // Add isSubmitting
   } = useForm<SignupFormData>();
 
   const password = watch("password");
 
-  const onSubmit = (data: SignupFormData) => {
-    console.log("Signup data:", data);
+  const onSubmit = async (data: SignupFormData) => {
+    setApiError(null);
+    try {
+      // Call the backend API
+      await api.post("/auth/register", {
+        fullName: data.fullName,
+        company: data.company,
+        email: data.email,
+        password: data.password,
+      });
+
+      // On success, redirect to login page with a success message
+      navigate("/login", {
+        state: { success: "Account created! Please sign in." },
+      });
+    } catch (error: any) {
+      if (error.response) {
+        setApiError(
+          error.response.data.message ||
+            "Registration failed. Please try again."
+        );
+      } else if (error.request) {
+        setApiError("Network error. Please try again.");
+      } else {
+        setApiError("An unexpected error occurred.");
+      }
+      console.error("Signup error:", error);
+    }
   };
 
   return (
@@ -258,6 +287,13 @@ function Signup(): JSX.Element {
               </div>
             </div>
 
+            {/* Display API Error Message */}
+            {apiError && (
+              <div className="text-center p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
+                <p className="text-sm text-red-400">{apiError}</p>
+              </div>
+            )}
+
             <div>
               <label className="flex items-start gap-3 cursor-pointer group">
                 <input
@@ -293,14 +329,21 @@ function Signup(): JSX.Element {
 
             <button
               onClick={handleSubmit(onSubmit)}
-              className="group w-full py-3 px-6 bg-linear-to-r from-emerald-500 to-teal-500 text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-emerald-500/30 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
+              disabled={isSubmitting}
+              className="group w-full py-3 px-6 bg-linear-to-r from-emerald-500 to-teal-500 text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-emerald-500/30 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
             >
-              Create Account
-              <ArrowRight
-                size={20}
-                className="group-hover:translate-x-1 transition-transform duration-300"
-                strokeWidth={2.5}
-              />
+              {isSubmitting ? (
+                "Creating Account..."
+              ) : (
+                <>
+                  Create Account
+                  <ArrowRight
+                    size={20}
+                    className="group-hover:translate-x-1 transition-transform duration-300"
+                    strokeWidth={2.5}
+                  />
+                </>
+              )}
             </button>
           </div>
 
