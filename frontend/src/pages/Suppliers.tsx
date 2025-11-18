@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { type JSX, useState, useMemo, useEffect } from "react";
 import Banner from "../components/Banner";
-import api from "../services/api"; // Import authenticated API service
+import api from "../services/api";
 import {
   Factory,
   Leaf,
@@ -53,26 +54,23 @@ function Suppliers(): JSX.Element {
   >([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch suppliers from backend
   useEffect(() => {
     const fetchSuppliers = async () => {
       try {
-        // We re-use the reports endpoint as it contains all the supplier evaluation data needed
         const response = await api.get("/api/reports");
 
         if (response.data && response.data.success) {
           const reports = response.data.reports;
 
-          // Map backend data to frontend SupplierEvaluationResult interface
           const mappedSuppliers: SupplierEvaluationResult[] = reports.map(
             (report: any) => {
               const ai = report.aiOutput || {};
               const esg = ai.esg || {};
               const risk = ai.risk || {};
 
-              const riskScore = (risk.riskScore || 0) * 10; // Scale 1-10 to 1-100
+              const riskScore = (risk.riskScore || 0) * 10;
               const greenScore = ai.environment?.carbonIntensityScore || 0;
-              // Calculate average ESG score
+
               const sustainabilityScore = Math.round(
                 ((esg.environmental || 0) +
                   (esg.social || 0) +

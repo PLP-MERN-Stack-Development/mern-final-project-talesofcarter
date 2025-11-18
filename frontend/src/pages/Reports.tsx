@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { type JSX, useState, useEffect } from "react";
 import { Link } from "react-router";
 import Banner from "../components/Banner";
-import api from "../services/api"; // Import authenticated API service
+import api from "../services/api";
 import {
   FileText,
   Leaf,
@@ -77,21 +78,17 @@ function Reports(): JSX.Element {
         if (response.data && response.data.success) {
           const dbReports = response.data.reports;
 
-          // Map MongoDB documents to the Report interface
           const mappedReports: Report[] = dbReports.map((item: any) => {
             const ai = item.aiOutput || {};
             const esg = ai.esg || {};
 
-            // Construct a title if one isn't explicitly saved
             const displayTitle = `${item.supplierName} - ESG Evaluation`;
 
-            // Determine type based on data or default
             const reportType = "Supplier ESG";
 
-            // Calculate scores (safeguarding against missing data)
             const riskScore = (ai.risk?.riskScore || 0) * 10;
             const greenScore = ai.environment?.carbonIntensityScore || 0;
-            // Average of ESG components for sustainability score
+
             const sustainabilityScore = Math.round(
               ((esg.environmental || 0) +
                 (esg.social || 0) +
@@ -111,7 +108,6 @@ function Reports(): JSX.Element {
                 riskScore,
                 sustainabilityScore,
                 greenScore,
-                // Map AI output arrays to frontend arrays
                 insights: ai.spendInsights?.improvementSuggestions || [],
                 recommendations: ai.diversity?.recommendations || [],
                 alternativeSuggestions: ai.alternativeSuggestions || [],

@@ -1,6 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { type JSX, useState, useEffect } from "react";
 import Banner from "../components/Banner";
-import api from "../services/api"; // Import the authenticated API service
+import api from "../services/api";
 import {
   Leaf,
   Factory,
@@ -63,20 +66,62 @@ function Dashboard(): JSX.Element {
   const [suppliers, setSuppliers] = useState<SupplierData[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Mock data for demonstration (Fallback)
-  const mockSuppliers: SupplierData[] = [];
+  const mockSuppliers: SupplierData[] = [
+    {
+      name: "EcoMaterials Inc.",
+      industry: "Manufacturing",
+      riskScore: 25,
+      sustainabilityScore: 92,
+      greenScore: 88,
+      riskLevel: "Low",
+      lastUpdated: "2 days ago",
+    },
+    {
+      name: "GreenLogistics Co.",
+      industry: "Logistics",
+      riskScore: 55,
+      sustainabilityScore: 78,
+      greenScore: 72,
+      riskLevel: "Medium",
+      lastUpdated: "1 week ago",
+    },
+    {
+      name: "SustainSupply Ltd.",
+      industry: "Retail",
+      riskScore: 30,
+      sustainabilityScore: 88,
+      greenScore: 85,
+      riskLevel: "Low",
+      lastUpdated: "3 days ago",
+    },
+    {
+      name: "GlobalParts Corp.",
+      industry: "Manufacturing",
+      riskScore: 72,
+      sustainabilityScore: 65,
+      greenScore: 60,
+      riskLevel: "High",
+      lastUpdated: "5 days ago",
+    },
+    {
+      name: "LocalServices Pro",
+      industry: "Services",
+      riskScore: 20,
+      sustainabilityScore: 95,
+      greenScore: 93,
+      riskLevel: "Low",
+      lastUpdated: "1 day ago",
+    },
+  ];
 
   useEffect(() => {
-    // Fetch supplier evaluations from API
     const fetchSuppliers = async () => {
       try {
-        // Updated: Use the 'api' service to include Auth headers
         const response = await api.get("/api/reports");
 
         if (response.data && response.data.success) {
           const reports = response.data.reports;
 
-          // Map backend Report model to frontend SupplierData interface
           const mappedData: SupplierData[] = reports.map((report: any) => {
             const ai = report.aiOutput || {};
             const esg = ai.esg || {};
@@ -130,7 +175,7 @@ function Dashboard(): JSX.Element {
     };
 
     fetchSuppliers();
-  }, [dateFilter, categoryFilter]);
+  }, [dateFilter, categoryFilter, mockSuppliers]);
 
   // Calculate aggregate metrics
   const calculateMetrics = () => {

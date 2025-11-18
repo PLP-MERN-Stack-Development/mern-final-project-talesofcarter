@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useRef, useEffect } from "react";
 import Banner from "../components/Banner";
 import api from "../services/api";
@@ -209,7 +210,7 @@ export default function BotEngine() {
     }
   }, [messages]);
 
-  const validateField = (key: FieldKey, value: any): string | null => {
+  const validateField = (key: FieldKey, value: string): string | null => {
     if (key === "supplierName" || key === "industry") {
       if (!value || String(value).trim().length < 1) return "Required";
       return null;
@@ -378,18 +379,22 @@ export default function BotEngine() {
 
       const resultMessage = `Analysis Complete for ${mappedResult.supplierName}
 
-Key Scores:
-• Risk Score: ${mappedResult.riskScore}/100
-• Sustainability Score: ${mappedResult.sustainabilityScore}/100
-• Green Score: ${mappedResult.greenScore}/100
+        Key Scores:
+        • Risk Score: ${mappedResult.riskScore}/100
+        • Sustainability Score: ${mappedResult.sustainabilityScore}/100
+        • Green Score: ${mappedResult.greenScore}/100
 
-Top Insights:
-${mappedResult.insights.map((insight, i) => `${i + 1}. ${insight}`).join("\n")}
+        Top Insights:
+        ${mappedResult.insights
+          .map((insight, i) => `${i + 1}. ${insight}`)
+          .join("\n")}
 
-Recommendations:
-${mappedResult.recommendations.map((rec, i) => `${i + 1}. ${rec}`).join("\n")}
+        Recommendations:
+        ${mappedResult.recommendations
+          .map((rec, i) => `${i + 1}. ${rec}`)
+          .join("\n")}
 
-Would you like to evaluate another supplier?`;
+        Would you like to evaluate another supplier?`;
 
       addMessage("assistant", resultMessage);
     } catch (err: any) {

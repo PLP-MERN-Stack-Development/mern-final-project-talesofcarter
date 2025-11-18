@@ -26,13 +26,13 @@ interface SignupFormData {
 function Signup(): JSX.Element {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [apiError, setApiError] = useState<string | null>(null); // State for API errors
-  const navigate = useNavigate(); // For redirecting
+  const [apiError, setApiError] = useState<string | null>(null);
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
     control,
-    formState: { errors, isSubmitting }, // Add isSubmitting
+    formState: { errors, isSubmitting },
   } = useForm<SignupFormData>();
 
   const password = useWatch({
