@@ -1,8 +1,9 @@
 import { type JSX, useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { useForm } from "react-hook-form";
 import { Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
 import { FaGoogle, FaGithub } from "react-icons/fa";
+import api from "../services/api";
 
 interface LoginFormData {
   email: string;
@@ -11,14 +12,33 @@ interface LoginFormData {
 
 function Login(): JSX.Element {
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<LoginFormData>();
 
-  const onSubmit = (data: LoginFormData) => {
-    console.log("Login data:", data);
+  const navigate = useNavigate();
+
+  const onSubmit = async (data: LoginFormData) => {
+    setError(null);
+    try {
+      const response = await api.post("/auth/login", {
+        email: data.email,
+        password: data.password,
+      });
+
+      if (response.data.success) {
+        localStorage.setItem("token,", response.data.token);
+        navigate("/ai");
+      }
+    } catch (error: unknown) {
+      setError(
+        error.response?.data?.message ||
+          "Login failed. Please check your credentials."
+      );
+    }
   };
 
   return (
@@ -59,7 +79,7 @@ function Login(): JSX.Element {
             </p>
           </div>
 
-          <div className="space-y-5">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             <div>
               <label
                 htmlFor="email"
@@ -131,6 +151,13 @@ function Login(): JSX.Element {
               )}
             </div>
 
+            {/* Show API Error */}
+            {error && (
+              <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-center">
+                <p className="text-sm text-red-400">{error}</p>
+              </div>
+            )}
+
             <div className="flex items-center justify-between">
               <label className="flex items-center gap-2 cursor-pointer group">
                 <input
@@ -150,17 +177,20 @@ function Login(): JSX.Element {
             </div>
 
             <button
-              onClick={handleSubmit(onSubmit)}
-              className="group w-full py-3 px-6 bg-linear-to-r from-emerald-500 to-teal-500 text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-emerald-500/30 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
+              type="submit"
+              disabled={isSubmitting}
+              className="group w-full py-3 px-6 bg-linear-to-r from-emerald-500 to-teal-500 text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-emerald-500/30 transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50"
             >
-              Sign In
-              <ArrowRight
-                size={20}
-                className="group-hover:translate-x-1 transition-transform duration-300"
-                strokeWidth={2.5}
-              />
+              {isSubmitting ? "Signing In..." : "Sign In"}
+              {!isSubmitting && (
+                <ArrowRight
+                  size={20}
+                  className="group-hover:translate-x-1 transition-transform duration-300"
+                  strokeWidth={2.5}
+                />
+              )}
             </button>
-          </div>
+          </form>
 
           <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
