@@ -8,7 +8,7 @@ ProQure is a full-stack web application designed to revolutionize procurement by
 
 ## 📊 Pitch Deck
 
-[**Access the project pitch deck here**](https://your-pitch-deck-link.com) <!-- Replace with your pitch deck URL -->
+[**Access the project pitch deck here**](https://www.canva.com/design/DAG5Dze8RTY/zZh23Fn-eCK8Ng0ZSWRQAQ/edit?utm_content=DAG5Dze8RTY&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton) 
 
 ## ✨ Key Features
 
