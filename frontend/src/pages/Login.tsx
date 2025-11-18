@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
 import { FaGoogle, FaGithub } from "react-icons/fa";
 import api from "../services/api";
+import { isAxiosError } from "axios";
 
 interface LoginFormData {
   email: string;
@@ -33,11 +34,19 @@ function Login(): JSX.Element {
         localStorage.setItem("token,", response.data.token);
         navigate("/ai");
       }
-    } catch (error: unknown) {
-      setError(
-        error.response?.data?.message ||
-          "Login failed. Please check your credentials."
-      );
+    } catch (error) {
+      if (isAxiosError(error)) {
+        setError(
+          error.response?.data?.message ||
+            "Login failed. Please check your credentials."
+        );
+      } else {
+        let message = "An unknown error occurred.";
+        if (error instanceof Error) {
+          message = error.message;
+        }
+        setError(message);
+      }
     }
   };
 

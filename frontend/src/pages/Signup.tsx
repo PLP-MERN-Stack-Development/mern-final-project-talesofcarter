@@ -1,5 +1,5 @@
 import { type JSX, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import {
   Mail,
   Lock,
@@ -10,8 +10,9 @@ import {
   Building,
 } from "lucide-react";
 import { FaGithub, FaGoogle } from "react-icons/fa";
-import { Link, useNavigate } from "react-router"; // Import useNavigate
-import api from "../services/api"; // Import our api instance
+import { Link, useNavigate } from "react-router";
+import api from "../services/api";
+import { isAxiosError } from "axios";
 
 interface SignupFormData {
   fullName: string;
@@ -30,39 +31,46 @@ function Signup(): JSX.Element {
   const {
     register,
     handleSubmit,
-    watch,
+    control,
     formState: { errors, isSubmitting }, // Add isSubmitting
   } = useForm<SignupFormData>();
 
-  const password = watch("password");
+  const password = useWatch({
+    control,
+    name: "password",
+  });
 
   const onSubmit = async (data: SignupFormData) => {
     setApiError(null);
     try {
-      // Call the backend API
-      await api.post("/auth/register", {
+      await api.post("/auth/signup", {
         fullName: data.fullName,
         company: data.company,
         email: data.email,
         password: data.password,
       });
 
-      // On success, redirect to login page with a success message
       navigate("/login", {
         state: { success: "Account created! Please sign in." },
       });
-    } catch (error: any) {
-      if (error.response) {
-        setApiError(
-          error.response.data.message ||
-            "Registration failed. Please try again."
-        );
-      } else if (error.request) {
-        setApiError("Network error. Please try again.");
+    } catch (error) {
+      if (isAxiosError(error)) {
+        if (error.response) {
+          setApiError(
+            error.response.data?.message ||
+              "Registration failed. Please try again."
+          );
+        } else if (error.request) {
+          setApiError(
+            "Network error. Please check your connection and try again."
+          );
+        } else {
+          setApiError("An unexpected request configuration error occurred.");
+        }
       } else {
+        console.error("Non-Axios Signup error:", error);
         setApiError("An unexpected error occurred.");
       }
-      console.error("Signup error:", error);
     }
   };
 
