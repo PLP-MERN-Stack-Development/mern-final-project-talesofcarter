@@ -122,3 +122,27 @@ To get a local copy up and running, follow these simple steps.
       ```
 
 The application should now be running on `http://localhost:3000` (or your configured port).
+
+6. **Screenshots**
+
+## Landing Page
+
+![Landing Page A](./screenshots/landing-page-1.png)
+
+![Landing Page B](./screenshots/landing-page-2.png)
+
+## AI Advisor
+
+![AI Advisor](./screenshots/ai.png)
+
+## Dashboard
+
+![Landing Page B](./screenshots/dashboard.png)
+
+## Report
+
+![Landing Page B](./screenshots/eval.png)
+
+## Suppliers
+
+![Landing Page B](./screenshots/suppliers.png)
