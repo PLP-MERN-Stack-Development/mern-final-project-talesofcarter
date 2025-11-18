@@ -4,9 +4,6 @@ import Report from "../models/Report.js";
 const API_URL = "https://router.huggingface.co/v1/chat/completions";
 const MODEL_ID = "openai/gpt-oss-120b:together";
 
-/**
- * Call HuggingFace LLM
- */
 const callHuggingFaceLLM = async (prompt) => {
   if (!process.env.HF_TOKEN) {
     console.error("Hugging Face API token not set");
@@ -24,7 +21,7 @@ const callHuggingFaceLLM = async (prompt) => {
       {
         role: "system",
         content:
-          "You are an expert AI for sustainable procurement analysis. Your sole task is to generate ONLY a single valid JSON object containing the full supplier ESG report. DO NOT include any text, Markdown, or tables outside of the JSON.",
+          "You are an advanced procurement sustainability AI a specialist in procurement sustainability, supply chain risk analysis, and ESG benchmarking. Your sole task is to generate ONLY a single valid JSON object containing the full supplier analysis. Your sole task is to perform an analysis of the supplier and respond with ONLY a single, valid JSON object containing the full report. DO NOT include any explanatory text, greetings, or markdown formatting outside of the JSON object itself",
       },
       { role: "user", content: prompt },
     ],
@@ -45,9 +42,7 @@ const callHuggingFaceLLM = async (prompt) => {
   }
 };
 
-/**
- * Clean and parse LLM output
- */
+// Clean and parse LLM output
 const cleanAndParseJson = (llmOutputText) => {
   const match = llmOutputText.match(/{[\s\S]*}/);
   if (!match) {
@@ -65,9 +60,7 @@ const cleanAndParseJson = (llmOutputText) => {
   }
 };
 
-/**
- * Analyze Supplier
- */
+// Analyze Supplier
 export const analyzeSupplier = async (req, res) => {
   try {
     const { supplierName, industry, responses } = req.body;
