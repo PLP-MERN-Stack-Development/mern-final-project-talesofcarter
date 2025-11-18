@@ -1,13 +1,19 @@
 import { type JSX, useEffect, useState } from "react";
-import { NavLink } from "react-router";
+import { NavLink, useNavigate } from "react-router";
 import Button from "./Button";
+import { useAuth } from "../context/AuthContext";
 
 type NavLinksType = { label: string; path: string };
 
 function Navbar({ toggleSidebar }: { toggleSidebar: () => void }): JSX.Element {
+  const { isAuthenticated, logout } = useAuth();
   const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const navigate = useNavigate();
+
+  const authButtonStyles =
+    "hidden sm:block px-6 md:px-5 lg:px-6 py-4 md:py-2.5 border-2 border-accent rounded-3xl";
 
   const navLinks: NavLinksType[] = [
     { label: "Home", path: "/" },
@@ -76,11 +82,21 @@ function Navbar({ toggleSidebar }: { toggleSidebar: () => void }): JSX.Element {
           </div>
 
           <div className="flex items-center gap-3 md:gap-4 lg:gap-6">
-            <NavLink to="/login">
-              <Button className="hidden sm:block px-6 md:px-5 lg:px-6 py-4 md:py-2.5 border-2 border-accent rounded-3xl">
-                Try Demo
+            {isAuthenticated ? (
+              <Button
+                onClick={() => {
+                  logout();
+                  navigate("/login");
+                }}
+                className={`${authButtonStyles}`}
+              >
+                Logout
               </Button>
-            </NavLink>
+            ) : (
+              <NavLink to="/login">
+                <Button className={`${authButtonStyles}`}>Try Demo</Button>
+              </NavLink>
+            )}
 
             <button
               className="flex flex-col justify-center gap-1.5 w-7 h-7 cursor-pointer group"

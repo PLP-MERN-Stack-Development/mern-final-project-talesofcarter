@@ -1,5 +1,6 @@
 import { type JSX, useState } from "react";
 import { Link, useNavigate } from "react-router";
+import { useAuth } from "../context/AuthContext";
 import { useForm } from "react-hook-form";
 import { Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
 import { FaGoogle, FaGithub } from "react-icons/fa";
@@ -12,6 +13,7 @@ interface LoginFormData {
 }
 
 function Login(): JSX.Element {
+  const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const {
@@ -19,19 +21,15 @@ function Login(): JSX.Element {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<LoginFormData>();
-
   const navigate = useNavigate();
 
   const onSubmit = async (data: LoginFormData) => {
     setError(null);
     try {
-      const response = await api.post("/auth/login", {
-        email: data.email,
-        password: data.password,
-      });
+      const response = await api.post("/auth/login", data);
 
-      if (response.data.success) {
-        localStorage.setItem("token,", response.data.token);
+      if (response.data.success && response.data.token) {
+        login(response.data.token);
         navigate("/ai");
       }
     } catch (error) {
