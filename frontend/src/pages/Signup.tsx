@@ -43,7 +43,7 @@ function Signup(): JSX.Element {
   const onSubmit = async (data: SignupFormData) => {
     setApiError(null);
     try {
-      await api.post("/auth/signup", {
+      await api.post("/api/auth/signup", {
         fullName: data.fullName,
         company: data.company,
         email: data.email,

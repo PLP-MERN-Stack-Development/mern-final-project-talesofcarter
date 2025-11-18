@@ -1,5 +1,7 @@
-import { type JSX, useState } from "react";
+import { type JSX, useState, useEffect } from "react";
+import { Link } from "react-router";
 import Banner from "../components/Banner";
+import api from "../services/api"; // Import authenticated API service
 import {
   FileText,
   Leaf,
@@ -62,110 +64,79 @@ function Reports(): JSX.Element {
   const [selectedReport, setSelectedReport] = useState<Report | null>(null);
   const [showModal, setShowModal] = useState(false);
 
-  // Real data from backend (multiple examples)
-  const reports: Report[] = [
-    {
-      id: "1",
-      title: "EcoSteel Manufacturing Ltd - ESG Evaluation",
-      type: "Supplier ESG",
-      date: "2025-11-15",
-      status: "completed",
-      supplierData: {
-        supplierName: "EcoSteel Manufacturing Ltd",
-        industry: "Manufacturing",
-        riskScore: 64,
-        sustainabilityScore: 72,
-        greenScore: 68,
-        insights: [
-          "Delivery reliability is moderate and recent late deliveries indicate potential logistical inefficiencies.",
-          "Annual CO₂ emissions (1200 tons) are 20–30% higher than typical manufacturing standards.",
-          "Renewable energy usage of 45% exceeds the Fortune 500 sector average of 40%.",
-          "Labor practices align with industry norms but fall short of sustainability leaders scoring 8–10.",
-          "Governance transparency at 8/10 is considered strong and above average.",
-        ],
-        recommendations: [
-          "Work with the supplier to adopt emissions-reduction programs such as energy-efficient furnaces and clean fuel alternatives.",
-          "Encourage the supplier to adopt Science-Based Targets (SBTi) for emissions reduction.",
-          "Model governance frameworks after Fortune 500 leaders like Siemens and 3M.",
-          "Implement advanced worker safety training and audits.",
-          "Introduce strict KPIs to reduce late deliveries by 30–50% within one year.",
-        ],
-        alternativeSuggestions: [
-          "Evaluate suppliers certified under ISO 14001 and ISO 45001.",
-          "Explore regional suppliers using 70%+ renewable energy.",
-          "Consider suppliers with published annual ESG reports (GRI/SASB).",
-        ],
-        chartData: {
-          risk: 64,
-          environment: 66,
-          social: 72,
-          governance: 82,
-        },
-      },
-    },
-    {
-      id: "2",
-      title: "GreenLogistics Co - Carbon Impact Report",
-      type: "CO₂ Impact",
-      date: "2025-11-10",
-      status: "completed",
-      supplierData: {
-        supplierName: "GreenLogistics Co",
-        industry: "Logistics",
-        riskScore: 42,
-        sustainabilityScore: 88,
-        greenScore: 91,
-        insights: [
-          "Fleet electrification program ahead of schedule — 68% of vehicles now electric.",
-          "Route optimization reduced fuel consumption by 31% YoY.",
-          "Carbon offset program verified and fully compliant.",
-        ],
-        recommendations: [
-          "Expand last-mile electric delivery to remaining urban zones.",
-          "Integrate AI-based predictive routing for additional 8–12% efficiency gains.",
-        ],
-        alternativeSuggestions: [
-          "Partner with rail freight providers for long-haul routes.",
-          "Explore hydrogen fuel cell trucks for heavy cargo.",
-        ],
-        chartData: {
-          risk: 42,
-          environment: 91,
-          social: 85,
-          governance: 88,
-        },
-      },
-    },
-    {
-      id: "3",
-      title: "SustainPack Solutions - Monthly Scorecard",
-      type: "Scorecard",
-      date: "2025-11-01",
-      status: "completed",
-      supplierData: {
-        supplierName: "SustainPack Solutions",
-        industry: "Packaging",
-        riskScore: 28,
-        sustainabilityScore: 94,
-        greenScore: 96,
-        insights: [
-          "100% recycled or bio-based materials used in production.",
-          "Zero waste to landfill achieved for third consecutive year.",
-          "Industry-leading circular economy model.",
-        ],
-        recommendations: [
-          "Maintain current excellence — consider industry thought leadership publication.",
-        ],
-        alternativeSuggestions: [],
-        chartData: {
-          risk: 28,
-          environment: 96,
-          social: 90,
-          governance: 93,
-        },
-      },
-    },
-  ];
+  // State for reports data
+  const [reports, setReports] = useState<Report[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch reports from Backend
+  useEffect(() => {
+    const fetchReports = async () => {
+      try {
+        const response = await api.get("/api/reports");
+
+        if (response.data && response.data.success) {
+          const dbReports = response.data.reports;
+
+          // Map MongoDB documents to the Report interface
+          const mappedReports: Report[] = dbReports.map((item: any) => {
+            const ai = item.aiOutput || {};
+            const esg = ai.esg || {};
+
+            // Construct a title if one isn't explicitly saved
+            const displayTitle = `${item.supplierName} - ESG Evaluation`;
+
+            // Determine type based on data or default
+            const reportType = "Supplier ESG";
+
+            // Calculate scores (safeguarding against missing data)
+            const riskScore = (ai.risk?.riskScore || 0) * 10;
+            const greenScore = ai.environment?.carbonIntensityScore || 0;
+            // Average of ESG components for sustainability score
+            const sustainabilityScore = Math.round(
+              ((esg.environmental || 0) +
+                (esg.social || 0) +
+                (esg.governance || 0)) /
+                3
+            );
+
+            return {
+              id: item._id,
+              title: displayTitle,
+              type: reportType,
+              date: item.createdAt,
+              status: "completed", // Assuming if it's in DB, analysis is done
+              supplierData: {
+                supplierName: item.supplierName,
+                industry: item.industry,
+                riskScore,
+                sustainabilityScore,
+                greenScore,
+                // Map AI output arrays to frontend arrays
+                insights: ai.spendInsights?.improvementSuggestions || [],
+                recommendations: ai.diversity?.recommendations || [],
+                alternativeSuggestions: ai.alternativeSuggestions || [],
+                chartData: {
+                  risk: riskScore,
+                  environment: esg.environmental || 0,
+                  social: esg.social || 0,
+                  governance: esg.governance || 0,
+                },
+              },
+            };
+          });
+
+          setReports(mappedReports);
+        }
+      } catch (error) {
+        console.error("Failed to fetch reports:", error);
+        // Optionally handle error state here
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchReports();
+  }, []);
 
   const filteredReports = reports.filter((report) => {
     const matchesDate =
@@ -201,15 +172,17 @@ function Reports(): JSX.Element {
     if (!selectedReport) return;
     const dataStr = JSON.stringify(selectedReport.supplierData, null, 2);
     const blob = new Blob([dataStr], { type: "application/json" });
-    this.href = URL.createObjectURL(blob);
+    const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
+    link.href = url;
     link.download = `${selectedReport.supplierData.supplierName.replace(
       / /g,
       "_"
     )}_Evaluation.json`;
+    document.body.appendChild(link);
     link.click();
-    URL.revokeObjectURL(link.href);
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   const getStatusBadge = (status: string) => {
@@ -357,11 +330,12 @@ function Reports(): JSX.Element {
                 </select>
               </div>
             </div>
-
-            <button className="flex items-center gap-2 px-6 py-3 bg-linear-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white text-sm font-semibold rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-green-500/30">
-              <Plus className="w-5 h-5" />
-              Generate New Report
-            </button>
+            <Link to="/ai">
+              <button className="flex items-center gap-2 px-6 py-3 bg-linear-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white text-sm font-semibold rounded-xl transition-all duration-300 cursor-pointer">
+                <Plus className="w-5 h-5" />
+                Generate New Report
+              </button>
+            </Link>
           </div>
 
           <div className="mb-6">
@@ -378,73 +352,82 @@ function Reports(): JSX.Element {
 
           {/* Reports Grid */}
           <div className="grid grid-banner grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredReports.map((report) => (
-              <div
-                key={report.id}
-                className="group relative bg-linear-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-xl rounded-3xl p-6 border border-gray-700/50 hover:border-gray-600 transition-all duration-300 hover:scale-105 cursor-pointer overflow-hidden"
-              >
-                <div
-                  className={`absolute inset-0 bg-linear-to-br ${getTypeGradient(
-                    report.type
-                  )} opacity-0 group-hover:opacity-10 transition-opacity duration-300`}
-                />
-
-                <div className="relative flex items-start justify-between mb-4">
-                  <div
-                    className={`p-3 bg-linear-to-br ${getTypeGradient(
-                      report.type
-                    )} rounded-2xl shadow-lg`}
-                  >
-                    {getTypeIcon(report.type)}
-                  </div>
-                  <button className="p-2 hover:bg-gray-700/50 rounded-lg transition-colors">
-                    <MoreVertical className="w-5 h-5 text-gray-400" />
-                  </button>
-                </div>
-
-                <div className="relative mb-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    {getStatusBadge(report.status)}
-                    <span className="text-xs text-gray-500">{report.type}</span>
-                  </div>
-                  <h3 className="text-lg font-bold text-white mb-2 line-clamp-2 group-hover:text-green-400 transition-colors">
-                    {report.title}
-                  </h3>
-                  <p className="text-sm text-gray-400 line-clamp-3 mb-3">
-                    {report.supplierData.supplierName} ·{" "}
-                    {report.supplierData.industry}
-                  </p>
-                  <div className="flex items-center gap-2 text-xs text-gray-500 mb-3">
-                    <Calendar className="w-3 h-3" />
-                    {new Date(report.date).toLocaleDateString("en-US", {
-                      month: "short",
-                      day: "numeric",
-                      year: "numeric",
-                    })}
-                  </div>
-                </div>
-
-                <div className="relative flex items-center gap-2 pt-4 border-t border-gray-700/50">
-                  <button
-                    onClick={() => handlePreview(report)}
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-gray-700/50 hover:bg-gray-700 text-white text-sm font-medium rounded-xl transition-all duration-300"
-                  >
-                    <Eye className="w-4 h-4" />
-                    Preview
-                  </button>
-                  <button className="p-2.5 bg-gray-700/50 hover:bg-gray-700 rounded-xl transition-all duration-300 group/btn">
-                    <FileDown className="w-4 h-4 text-gray-300 group-hover/btn:text-green-400 transition-colors" />
-                  </button>
-                  <button className="p-2.5 bg-gray-700/50 hover:bg-gray-700 rounded-xl transition-all duration-300 group/btn">
-                    <FileSpreadsheet className="w-4 h-4 text-gray-300 group-hover/btn:text-blue-400 transition-colors" />
-                  </button>
-                </div>
+            {loading ? (
+              // Loading state placeholder
+              <div className="col-span-full text-center py-10">
+                <p className="text-gray-400">Loading reports...</p>
               </div>
-            ))}
+            ) : (
+              filteredReports.map((report) => (
+                <div
+                  key={report.id}
+                  className="group relative bg-linear-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-xl rounded-3xl p-6 border border-gray-700/50 hover:border-gray-600 transition-all duration-300 hover:scale-105 cursor-pointer overflow-hidden"
+                >
+                  <div
+                    className={`absolute inset-0 bg-linear-to-br ${getTypeGradient(
+                      report.type
+                    )} opacity-0 group-hover:opacity-10 transition-opacity duration-300`}
+                  />
+
+                  <div className="relative flex items-start justify-between mb-4">
+                    <div
+                      className={`p-3 bg-linear-to-br ${getTypeGradient(
+                        report.type
+                      )} rounded-2xl shadow-lg`}
+                    >
+                      {getTypeIcon(report.type)}
+                    </div>
+                    <button className="p-2 hover:bg-gray-700/50 rounded-lg transition-colors">
+                      <MoreVertical className="w-5 h-5 text-gray-400" />
+                    </button>
+                  </div>
+
+                  <div className="relative mb-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      {getStatusBadge(report.status)}
+                      <span className="text-xs text-gray-500">
+                        {report.type}
+                      </span>
+                    </div>
+                    <h3 className="text-lg font-bold text-white mb-2 line-clamp-2 group-hover:text-green-400 transition-colors">
+                      {report.title}
+                    </h3>
+                    <p className="text-sm text-gray-400 line-clamp-3 mb-3">
+                      {report.supplierData.supplierName} ·{" "}
+                      {report.supplierData.industry}
+                    </p>
+                    <div className="flex items-center gap-2 text-xs text-gray-500 mb-3">
+                      <Calendar className="w-3 h-3" />
+                      {new Date(report.date).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      })}
+                    </div>
+                  </div>
+
+                  <div className="relative flex items-center gap-2 pt-4 border-t border-gray-700/50">
+                    <button
+                      onClick={() => handlePreview(report)}
+                      className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-gray-700/50 hover:bg-gray-700 text-white text-sm font-medium rounded-xl transition-all duration-300"
+                    >
+                      <Eye className="w-4 h-4" />
+                      Preview
+                    </button>
+                    <button className="p-2.5 bg-gray-700/50 hover:bg-gray-700 rounded-xl transition-all duration-300 group/btn">
+                      <FileDown className="w-4 h-4 text-gray-300 group-hover/btn:text-green-400 transition-colors" />
+                    </button>
+                    <button className="p-2.5 bg-gray-700/50 hover:bg-gray-700 rounded-xl transition-all duration-300 group/btn">
+                      <FileSpreadsheet className="w-4 h-4 text-gray-300 group-hover/btn:text-blue-400 transition-colors" />
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
 
           {/* Empty State */}
-          {filteredReports.length === 0 && (
+          {!loading && filteredReports.length === 0 && (
             <div className="text-center py-20">
               <div className="inline-flex items-center justify-center w-20 h-20 bg-gray-800/50 rounded-full mb-4">
                 <FileText className="w-10 h-10 text-gray-600" />

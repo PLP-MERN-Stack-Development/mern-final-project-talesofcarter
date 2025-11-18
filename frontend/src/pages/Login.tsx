@@ -26,7 +26,7 @@ function Login(): JSX.Element {
   const onSubmit = async (data: LoginFormData) => {
     setError(null);
     try {
-      const response = await api.post("/auth/login", data);
+      const response = await api.post("/api/auth/login", data);
 
       if (response.data.success && response.data.token) {
         login(response.data.token);

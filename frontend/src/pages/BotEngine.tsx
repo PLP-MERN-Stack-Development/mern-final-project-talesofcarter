@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import Banner from "../components/Banner";
+import api from "../services/api";
 import {
   MessageCircleMore,
   SendHorizontal,
@@ -11,7 +12,6 @@ import {
   Users as People,
 } from "lucide-react";
 
-// Lucide icons as inline SVGs
 const MessageSquare = ({ className }: { className?: string }) => (
   <MessageCircleMore className={className} />
 );
@@ -270,7 +270,7 @@ export default function BotEngine() {
       setTimeout(() => {
         clearChat();
         setIsTyping(false);
-      }, 800);
+      }, 500);
       return;
     }
 
@@ -298,84 +298,110 @@ export default function BotEngine() {
 
     const validationError = validateField(currentQuestion.key, parsedValue);
 
-    setTimeout(async () => {
-      if (validationError) {
-        addMessage("assistant", `${validationError}. ${currentQuestion.label}`);
-        setIsTyping(false);
-        return;
-      }
+    // Brief delay for natural feel
+    await new Promise((resolve) => setTimeout(resolve, 500));
 
-      // Update data
-      setData((prev) => ({ ...prev, [currentQuestion.key]: parsedValue }));
+    if (validationError) {
+      addMessage("assistant", `${validationError}. ${currentQuestion.label}`);
+      setIsTyping(false);
+      return;
+    }
 
-      // Move to next question
-      if (currentQuestionIndex < QUESTIONS.length - 1) {
-        const nextIndex = currentQuestionIndex + 1;
-        setCurrentQuestionIndex(nextIndex);
-        addMessage("assistant", QUESTIONS[nextIndex].label);
-        setIsTyping(false);
-      } else {
-        // All questions answered, submit
-        addMessage(
-          "assistant",
-          "Great! I have all the information I need. Let me analyze this supplier for you..."
-        );
-        setIsTyping(false);
+    // Update data
+    const updatedData = { ...data, [currentQuestion.key]: parsedValue };
+    setData(updatedData);
 
-        // Submit evaluation
-        const updatedData = { ...data, [currentQuestion.key]: parsedValue };
-        await submitEvaluation(updatedData);
-      }
-    }, 800);
+    // Move to next question or Submit
+    if (currentQuestionIndex < QUESTIONS.length - 1) {
+      const nextIndex = currentQuestionIndex + 1;
+      setCurrentQuestionIndex(nextIndex);
+      addMessage("assistant", QUESTIONS[nextIndex].label);
+      setIsTyping(false);
+    } else {
+      // All questions answered, submit
+      addMessage(
+        "assistant",
+        "Great! I have all the information I need. Let me analyze this supplier for you..."
+      );
+      // Keep isTyping true while we submit
+      await submitEvaluation(updatedData);
+    }
   };
 
   const submitEvaluation = async (finalData: SupplierEvaluationInput) => {
+    // Ensure typing is on
     setIsTyping(true);
 
+    // Restructure data to match backend expectation: { supplierName, industry, responses: { ...others } }
+    const { supplierName, industry, ...responses } = finalData;
+
     try {
-      const res = await fetch("/api/ai/evaluate-supplier", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(finalData),
+      const res = await api.post("/api/ai/analyze", {
+        supplierName,
+        industry,
+        responses,
       });
 
-      if (!res.ok) {
-        const text = await res.text();
-        throw new Error(`Server error: ${res.status} ${text}`);
-      }
+      const { fullReport } = res.data;
+      const aiOutput = fullReport.aiOutput;
 
-      const json = (await res.json()) as SupplierEvaluationResult;
-      setResult(json);
+      // Map the AI output (from aiController.js) to the frontend interface
+      const mappedResult: SupplierEvaluationResult = {
+        supplierName: aiOutput.supplierName,
+        industry: aiOutput.industry,
+        riskScore: (aiOutput.risk.riskScore || 0) * 10, // Convert 1-10 to 0-100
+        sustainabilityScore: aiOutput.esg.environmental || 0,
+        greenScore: aiOutput.environment.carbonIntensityScore || 0,
+        industryBenchmark: {
+          industry: aiOutput.industry,
+          avgCarbonEmissions: 0, // Placeholder or from AI if available
+          avgRenewableEnergyPct: 0,
+          avgLaborRating: 0,
+          avgGovernanceRating: 0,
+          analysis:
+            aiOutput.benchmarking?.fortune500Averages?.summary ||
+            "Benchmark data pending.",
+        },
+        insights: aiOutput.spendInsights?.improvementSuggestions || [],
+        recommendations: aiOutput.diversity?.recommendations || [],
+        alternativeSuggestions: [],
+        chartData: {
+          risk: (aiOutput.risk.riskScore || 0) * 10,
+          environment: aiOutput.esg.environmental || 0,
+          social: aiOutput.esg.social || 0,
+          governance: aiOutput.esg.governance || 0,
+        },
+      };
+
+      setResult(mappedResult);
       setIsCollectingData(false);
 
-      // Display results in chat
-      setTimeout(() => {
-        const resultMessage = `✅ Analysis Complete for ${json.supplierName}
+      const resultMessage = `Analysis Complete for ${mappedResult.supplierName}
 
-        📊 Key Scores:
-        • Risk Score: ${json.riskScore}/100
-        • Sustainability Score: ${json.sustainabilityScore}/100
-        • Green Score: ${json.greenScore}/100
+Key Scores:
+• Risk Score: ${mappedResult.riskScore}/100
+• Sustainability Score: ${mappedResult.sustainabilityScore}/100
+• Green Score: ${mappedResult.greenScore}/100
 
-        🔍 Top Insights:
-        ${json.insights.map((insight, i) => `${i + 1}. ${insight}`).join("\n")}
+Top Insights:
+${mappedResult.insights.map((insight, i) => `${i + 1}. ${insight}`).join("\n")}
 
-        💡 Recommendations:
-        ${json.recommendations.map((rec, i) => `${i + 1}. ${rec}`).join("\n")}
+Recommendations:
+${mappedResult.recommendations.map((rec, i) => `${i + 1}. ${rec}`).join("\n")}
 
-        Would you like to evaluate another supplier?`;
+Would you like to evaluate another supplier?`;
 
-        addMessage("assistant", resultMessage);
-        setIsTyping(false);
-      }, 1500);
+      addMessage("assistant", resultMessage);
     } catch (err: any) {
       console.error(err);
+      const errorMessage =
+        err?.response?.data?.message || err?.message || "Unknown server error";
+
       addMessage(
         "assistant",
-        `Sorry, there was an error processing your request: ${
-          err?.message ?? "Unknown error"
-        }. Please try again or say 'restart' to start over.`
+        `Sorry, there was an error processing your request: ${errorMessage}. Please try again or say 'restart'.`
       );
+    } finally {
       setIsTyping(false);
     }
   };
@@ -501,9 +527,7 @@ export default function BotEngine() {
 
             {/* Tips Card */}
             <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                💡 Tips
-              </h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">Tips</h3>
               <ul className="space-y-2 text-sm text-gray-600">
                 <li>• Answer all questions accurately</li>
                 <li>• Use actual data when possible</li>

@@ -1,5 +1,6 @@
 import { type JSX, useState, useEffect } from "react";
 import Banner from "../components/Banner";
+import api from "../services/api"; // Import the authenticated API service
 import {
   Leaf,
   Factory,
@@ -62,63 +63,61 @@ function Dashboard(): JSX.Element {
   const [suppliers, setSuppliers] = useState<SupplierData[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Mock data for demonstration
-  const mockSuppliers: SupplierData[] = [
-    {
-      name: "EcoMaterials Inc.",
-      industry: "Manufacturing",
-      riskScore: 25,
-      sustainabilityScore: 92,
-      greenScore: 88,
-      riskLevel: "Low",
-      lastUpdated: "2 days ago",
-    },
-    {
-      name: "GreenLogistics Co.",
-      industry: "Logistics",
-      riskScore: 55,
-      sustainabilityScore: 78,
-      greenScore: 72,
-      riskLevel: "Medium",
-      lastUpdated: "1 week ago",
-    },
-    {
-      name: "SustainSupply Ltd.",
-      industry: "Retail",
-      riskScore: 30,
-      sustainabilityScore: 88,
-      greenScore: 85,
-      riskLevel: "Low",
-      lastUpdated: "3 days ago",
-    },
-    {
-      name: "GlobalParts Corp.",
-      industry: "Manufacturing",
-      riskScore: 72,
-      sustainabilityScore: 65,
-      greenScore: 60,
-      riskLevel: "High",
-      lastUpdated: "5 days ago",
-    },
-    {
-      name: "LocalServices Pro",
-      industry: "Services",
-      riskScore: 20,
-      sustainabilityScore: 95,
-      greenScore: 93,
-      riskLevel: "Low",
-      lastUpdated: "1 day ago",
-    },
-  ];
+  // Mock data for demonstration (Fallback)
+  const mockSuppliers: SupplierData[] = [];
 
   useEffect(() => {
     // Fetch supplier evaluations from API
     const fetchSuppliers = async () => {
       try {
-        const response = await fetch("/api/suppliers/evaluations");
-        if (response.ok) {
-          const data = await response.json();
-          setSuppliers(data);
+        // Updated: Use the 'api' service to include Auth headers
+        const response = await api.get("/api/reports");
+
+        if (response.data && response.data.success) {
+          const reports = response.data.reports;
+
+          // Map backend Report model to frontend SupplierData interface
+          const mappedData: SupplierData[] = reports.map((report: any) => {
+            const ai = report.aiOutput || {};
+            const esg = ai.esg || {};
+            const risk = ai.risk || {};
+
+            // Convert AI risk score (1-10) to percentage (0-100)
+            const calculatedRiskScore = (risk.riskScore || 0) * 10;
+
+            // Determine Risk Level based on score
+            let calculatedRiskLevel: "High" | "Medium" | "Low" = "Low";
+            if (calculatedRiskScore >= 70) calculatedRiskLevel = "High";
+            else if (calculatedRiskScore >= 40) calculatedRiskLevel = "Medium";
+
+            // Calculate days since update
+            const date = new Date(report.createdAt);
+            const now = new Date();
+            const diffTime = Math.abs(now.getTime() - date.getTime());
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            const timeString =
+              diffDays === 1 ? "1 day ago" : `${diffDays} days ago`;
+
+            // Calculate average ESG for "Sustainability Score"
+            const avgEsg = Math.round(
+              ((esg.environmental || 0) +
+                (esg.social || 0) +
+                (esg.governance || 0)) /
+                3
+            );
+
+            return {
+              name: report.supplierName || "Unknown Supplier",
+              industry: report.industry || "General",
+              riskScore: calculatedRiskScore,
+              sustainabilityScore: avgEsg,
+              greenScore: esg.environmental || 0,
+              riskLevel: calculatedRiskLevel,
+              lastUpdated: timeString,
+            };
+          });
+
+          setSuppliers(mappedData.length > 0 ? mappedData : mockSuppliers);
         } else {
           setSuppliers(mockSuppliers);
         }
@@ -135,23 +134,27 @@ function Dashboard(): JSX.Element {
 
   // Calculate aggregate metrics
   const calculateMetrics = () => {
-    const totalSuppliers = suppliers.length || mockSuppliers.length;
+    const totalSuppliers =
+      suppliers.length > 0 ? suppliers.length : mockSuppliers.length;
     const data = suppliers.length > 0 ? suppliers : mockSuppliers;
 
-    const avgSustainability = Math.round(
-      data.reduce((sum, s) => sum + s.sustainabilityScore, 0) / totalSuppliers
-    );
+    const avgSustainability =
+      Math.round(
+        data.reduce((sum, s) => sum + s.sustainabilityScore, 0) / totalSuppliers
+      ) || 0;
 
-    const avgGreenScore = Math.round(
-      data.reduce((sum, s) => sum + s.greenScore, 0) / totalSuppliers
-    );
+    const avgGreenScore =
+      Math.round(
+        data.reduce((sum, s) => sum + s.greenScore, 0) / totalSuppliers
+      ) || 0;
 
     const lowRiskCount = data.filter((s) => s.riskLevel === "Low").length;
     const highRiskCount = data.filter((s) => s.riskLevel === "High").length;
 
-    const avgRiskScore = Math.round(
-      data.reduce((sum, s) => sum + s.riskScore, 0) / totalSuppliers
-    );
+    const avgRiskScore =
+      Math.round(
+        data.reduce((sum, s) => sum + s.riskScore, 0) / totalSuppliers
+      ) || 0;
 
     return {
       avgSustainability,
@@ -184,7 +187,7 @@ function Dashboard(): JSX.Element {
       icon: <Shield className="w-6 h-6" />,
       gradient: "from-blue-500 to-cyan-600",
       description: `${Math.round(
-        (stats.lowRiskCount / stats.totalSuppliers) * 100
+        (stats.lowRiskCount / (stats.totalSuppliers || 1)) * 100
       )}% safe`,
     },
     {
@@ -254,16 +257,16 @@ function Dashboard(): JSX.Element {
   // ESG Scores (Average across all suppliers)
   const esgData = (() => {
     const data = suppliers.length > 0 ? suppliers : mockSuppliers;
+    const len = data.length || 1;
+
     const avgEnvironment = Math.round(
-      data.reduce((sum, s) => sum + s.greenScore, 0) / data.length
+      data.reduce((sum, s) => sum + s.greenScore, 0) / len
     );
     const avgSocial = Math.round(
-      data.reduce((sum, s) => sum + s.sustainabilityScore * 0.85, 0) /
-        data.length
+      data.reduce((sum, s) => sum + s.sustainabilityScore * 0.85, 0) / len
     );
     const avgGovernance = Math.round(
-      data.reduce((sum, s) => sum + s.sustainabilityScore * 0.95, 0) /
-        data.length
+      data.reduce((sum, s) => sum + s.sustainabilityScore * 0.95, 0) / len
     );
 
     return [

@@ -1,10 +1,23 @@
+import mongoose from "mongoose";
 import Report from "../models/Report.js";
 
 // Get all reports for the logged-in user
 export const getAllReports = async (req, res) => {
   try {
     const userId = req.user;
-    const reports = await Report.find({ userId }).sort({ createdAt: -1 });
+
+    if (!userId) {
+      return res
+        .status(401)
+        .json({ success: false, message: "User identifier missing." });
+    }
+
+    const userObjectId = new mongoose.Types.ObjectId(userId);
+
+    const reports = await Report.find({ userId: userObjectId }).sort({
+      createdAt: -1,
+    });
+
     res.status(200).json({ success: true, reports });
   } catch (error) {
     console.error("Error fetching reports:", error);
@@ -12,10 +25,16 @@ export const getAllReports = async (req, res) => {
   }
 };
 
-// Get a single report by ID
 export const getReportById = async (req, res) => {
   try {
     const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Invalid report ID" });
+    }
+
     const report = await Report.findById(id);
 
     if (!report) {
@@ -24,8 +43,9 @@ export const getReportById = async (req, res) => {
         .json({ success: false, message: "Report not found" });
     }
 
-    // Ensure the user owns the report
-    if (report.userId.toString() !== req.user) {
+    const requestUserId = new mongoose.Types.ObjectId(req.user);
+
+    if (!report.userId.equals(requestUserId)) {
       return res.status(403).json({ success: false, message: "Unauthorized" });
     }
 
@@ -36,11 +56,22 @@ export const getReportById = async (req, res) => {
   }
 };
 
-// Get unique suppliers for a user
 export const getSuppliers = async (req, res) => {
   try {
     const userId = req.user;
-    const suppliers = await Report.find({ userId }).distinct("supplierName");
+
+    if (!userId) {
+      return res
+        .status(401)
+        .json({ success: false, message: "User identifier missing." });
+    }
+
+    const userObjectId = new mongoose.Types.ObjectId(userId);
+
+    const suppliers = await Report.find({ userId: userObjectId }).distinct(
+      "supplierName"
+    );
+
     res.status(200).json({ success: true, suppliers });
   } catch (error) {
     console.error("Error fetching suppliers:", error);

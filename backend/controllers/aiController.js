@@ -1,4 +1,5 @@
 import axios from "axios";
+import mongoose from "mongoose";
 import Report from "../models/Report.js";
 
 const API_URL = "https://router.huggingface.co/v1/chat/completions";
@@ -65,6 +66,12 @@ export const analyzeSupplier = async (req, res) => {
   try {
     const { supplierName, industry, responses } = req.body;
     const userId = req.user;
+
+    if (!userId) {
+      return res
+        .status(401)
+        .json({ success: false, message: "User not authenticated." });
+    }
 
     if (!supplierName || !industry || !responses) {
       return res
@@ -156,7 +163,7 @@ export const analyzeSupplier = async (req, res) => {
 
     // 4. Save report to DB
     const newReport = await Report.create({
-      userId,
+      userId: new mongoose.Types.ObjectId(userId),
       supplierName,
       industry,
       responses,
