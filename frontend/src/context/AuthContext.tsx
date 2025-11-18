@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable react-refresh/only-export-components */
 import {
   createContext,
   useContext,
@@ -7,11 +9,19 @@ import {
 } from "react";
 import api from "../services/api";
 
+interface User {
+  id?: string;
+  name?: string;
+  email?: string;
+  authenticated?: boolean;
+  [key: string]: any;
+}
+
 interface AuthContextType {
-  user: null;
+  user: User | null;
   token: string | null;
   isAuthenticated: boolean;
-  login: (token: string, user?: null) => void;
+  login: (token: string, user?: User) => void;
   logout: () => void;
   loading: boolean;
 }
@@ -19,7 +29,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -33,7 +43,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         try {
           setUser({ authenticated: true });
         } catch (error) {
+          console.log(error);
           localStorage.removeItem("token");
+          setToken(null);
+          setUser(null);
         }
       }
       setLoading(false);
@@ -42,9 +55,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     loadUser();
   }, []);
 
-  const login = (newToken: string, userData?: any) => {
+  const login = (newToken: string, userData?: User) => {
     localStorage.setItem("token", newToken);
     setToken(newToken);
+    // If userData is provided use it, otherwise set the placeholder
     setUser(userData || { authenticated: true });
     api.defaults.headers.Authorization = `Bearer ${newToken}`;
   };
