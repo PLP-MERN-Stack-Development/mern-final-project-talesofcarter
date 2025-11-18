@@ -1,53 +1,124 @@
-# ProQure
+# ProQure - AI-Powered Supplier Intelligence Platform
 
-This assignment focuses on designing, developing, and deploying a comprehensive full-stack MERN application that showcases all the skills you've learned throughout the course.
+ProQure is a full-stack web application designed to revolutionize procurement by providing AI-driven insights into supplier sustainability, risk, and performance. It empowers organizations to make smarter, more sustainable sourcing decisions.
 
-## Assignment Overview
+## 🌐 Live Demo
 
-You will:
+[**View the live application here**](https://proqure.vercel.app)
 
-1. Plan and design a full-stack MERN application
-2. Develop a robust backend with MongoDB, Express.js, and Node.js
-3. Create an interactive frontend with React.js
-4. Implement testing across the entire application
-5. Deploy the application to production
+## 📊 Pitch Deck
 
-## Getting Started
+[**Access the project pitch deck here**](https://your-pitch-deck-link.com) <!-- Replace with your pitch deck URL -->
 
-1. Accept the GitHub Classroom assignment
-2. Clone the repository to your local machine
-3. Follow the instructions in the `Week8-Assignment.md` file
-4. Plan, develop, and deploy your capstone project
+## ✨ Key Features
 
-## Files Included
+- **🤖 AI Advisor Chatbot:** A conversational interface that guides users through a comprehensive supplier evaluation process, collecting data on metrics ranging from delivery reliability to carbon emissions and labor practices.
+- **📈 Interactive Dashboard:** A dynamic and visually rich dashboard that aggregates and displays key supplier metrics. It features:
+  - **At-a-Glance Metrics:** Cards for average sustainability scores, risk levels, total evaluations, and more.
+  - **Data Visualization:** Interactive charts (line, bar, pie, radar) from Recharts to visualize sustainability trends, industry distribution, ESG performance, and risk analysis.
+  - **Supplier Table:** A detailed, sortable list of all evaluated suppliers with their scores, risk levels, and progress bars for easy comparison.
+- **🌿 Comprehensive ESG & Risk Analysis:** The AI engine analyzes collected data to generate:
+  - **Risk Scores:** Quantifies potential supply chain disruptions.
+  - **Sustainability & Green Scores:** Measures environmental and social impact.
+  - **ESG Breakdowns:** Provides detailed scores for Environmental, Social, and Governance categories.
+- **📊 Industry Benchmarking:** Compares a supplier's performance against industry averages to provide context and identify competitive advantages or areas for improvement.
+- **💡 Actionable Insights:** The AI generates clear recommendations and alternative supplier suggestions to mitigate risk and enhance sustainability.
 
-- `Week8-Assignment.md`: Detailed assignment instructions
+## 🚀 Technology Stack
 
-## Requirements
+This project is a MERN stack application with a focus on a modern, interactive user experience.
 
-- Node.js (v18 or higher)
-- MongoDB (local installation or Atlas account)
-- npm or yarn
-- Git and GitHub account
-- Accounts on deployment platforms (Render/Vercel/Netlify/etc.)
+### Frontend
 
-## Project Ideas
+- **Framework:** [React](https://reactjs.org/)
+- **JavaScript Superset:** [TypeScript](https://www.typescriptlang.org/)
+- **Styling:** [Tailwind CSS](https://tailwindcss.com/)
+- **Charting:** [Recharts](https://recharts.org/)
+- **Icons:** [Lucide React](https://lucide.dev/)
+- **API Communication:** [Axios](https://axios-http.com/)
 
-The `Week8-Assignment.md` file includes several project ideas, but you're encouraged to develop your own idea that demonstrates your skills and interests.
+### Backend
 
-## Submission
+- **Runtime:** [Node.js](https://nodejs.org/)
+- **Framework:** [Express.js](https://expressjs.com/)
+- **Database:** [MongoDB](https://www.mongodb.com/) (with Mongoose)
+- **AI Integration:** LLM (e.g., OpenAI API).
+- **Bcrypt**
+- **CORS**
+- **JWT**
 
-Your project will be automatically submitted when you push to your GitHub Classroom repository. Make sure to:
+## 📂 Project Structure
 
-1. Commit and push your code regularly
-2. Include comprehensive documentation
-3. Deploy your application and add the live URL to your README.md
-4. Create a video demonstration and include the link in your README.md
+The project follows a standard monorepo structure, separating the frontend and backend concerns.
 
-## Resources
+```
+/
+├── backend/
+│   ├── config/    # Handles API logic (e.g., aiController.js)
+│   ├── controllers/         # Mongoose schemas
+│   ├── middleware/         # API route definitions
+│   └── models/
+├── frontend/
+│   ├── public/
+│   └── src/
+│       ├── components/ # Reusable React components (Banner, etc.)
+│       ├── pages/      # Main page components (Dashboard.tsx, BotEngine.tsx)
+│       ├── services/   # API communication layer (api.ts)
+│       ├── App.tsx
+│       └── index.tsx
+└── README.md
+```
 
-- [MongoDB Documentation](https://docs.mongodb.com/)
-- [Express.js Documentation](https://expressjs.com/)
-- [React Documentation](https://react.dev/)
-- [Node.js Documentation](https://nodejs.org/en/docs/)
-- [GitHub Classroom Guide](https://docs.github.com/en/education/manage-coursework-with-github-classroom)
+## ⚙️ Getting Started
+
+To get a local copy up and running, follow these simple steps.
+
+### Prerequisites
+
+- Node.js and npm (or yarn)
+- MongoDB instance (local or cloud-based like MongoDB Atlas)
+- An API key from an AI provider (like OpenAI) if you intend to use the AI analysis feature.
+
+### Installation & Setup
+
+1.  **Clone the repository:**
+
+    ```sh
+    git clone https://github.com/your-username/proqure.git
+    cd proqure
+    ```
+
+2.  **Install Backend Dependencies:**
+
+    ```sh
+    cd backend
+    npm install
+    ```
+
+3.  **Configure Backend Environment:**
+    Create a `.env` file in the `backend` directory and add your configuration:
+
+    ```env
+    MONGO_URI=your_mongodb_connection_string
+    PORT=5000
+    OPENAI_API_KEY=your_ai_api_key # Or other AI provider key
+    ```
+
+4.  **Install Frontend Dependencies:**
+
+    ```sh
+    cd ../frontend
+    npm install
+    ```
+
+5.  **Run the Application:**
+    - In one terminal, start the backend server:
+      ```sh
+      cd backend && npm start
+      ```
+    - In another terminal, start the frontend development server:
+      ```sh
+      cd frontend && npm run dev
+      ```
+
+The application should now be running on `http://localhost:3000` (or your configured port).
