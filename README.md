@@ -1,127 +1,409 @@
-# ProQure - AI-Powered Supplier Intelligence Platform
+# 🚀 ProQure - AI-Powered Procurement & Sustainability Assistant
 
-ProQure is a full-stack web application designed to revolutionize procurement by providing AI-driven insights into supplier sustainability, risk, and performance. It empowers organizations to make smarter, more sustainable sourcing decisions.
+## 📋 Overview
 
-## 🌐 Live Demo
+### 🔍 The Problem
 
-[**View the live application here**](https://proqure.vercel.app)
+Modern procurement teams struggle with fragmented data, manual supplier evaluations, limited ESG visibility, and lack of real-time insights into spend patterns, carbon emissions, and supplier risk profiles—leading to inefficient decision-making and sustainability blind spots.
 
-## 📊 Pitch Deck
+### ✨ The Solution
 
-[**Access the project pitch deck here**](https://your-pitch-deck-link.com) <!-- Replace with your pitch deck URL -->
+ProQure is a full-stack procurement analytics platform that leverages AI (LLMs) to automatically extract key insights, generate intelligent supplier evaluations, analyze CO₂ emissions, and visualize procurement performance metrics across spend categories, ESG scorecards, and supplier risk profiles.
 
-## ✨ Key Features
+_Transforming procurement insights with automated analytics, ESG transparency, and supplier intelligence._
 
-- **🤖 AI Advisor Chatbot:** A conversational interface that guides users through a comprehensive supplier evaluation process, collecting data on metrics ranging from delivery reliability to carbon emissions and labor practices.
-- **📈 Interactive Dashboard:** A dynamic and visually rich dashboard that aggregates and displays key supplier metrics. It features:
-  - **At-a-Glance Metrics:** Cards for average sustainability scores, risk levels, total evaluations, and more.
-  - **Data Visualization:** Interactive charts (line, bar, pie, radar) from Recharts to visualize sustainability trends, industry distribution, ESG performance, and risk analysis.
-  - **Supplier Table:** A detailed, sortable list of all evaluated suppliers with their scores, risk levels, and progress bars for easy comparison.
-- **🌿 Comprehensive ESG & Risk Analysis:** The AI engine analyzes collected data to generate:
-  - **Risk Scores:** Quantifies potential supply chain disruptions.
-  - **Sustainability & Green Scores:** Measures environmental and social impact.
-  - **ESG Breakdowns:** Provides detailed scores for Environmental, Social, and Governance categories.
-- **📊 Industry Benchmarking:** Compares a supplier's performance against industry averages to provide context and identify competitive advantages or areas for improvement.
-- **💡 Actionable Insights:** The AI generates clear recommendations and alternative supplier suggestions to mitigate risk and enhance sustainability.
+## ✨ Features
 
-## 🚀 Technology Stack
+### 🔍 AI Advisor & Data Analysis
 
-This project is a MERN stack application with a focus on a modern, interactive user experience.
+A conversational interface that guides users through a comprehensive supplier evaluation process, collecting data on metrics ranging from delivery reliability to carbon emissions and labor practices.
 
-### Frontend
+- **Automatically generates:**
 
-- **Framework:** [React](https://reactjs.org/)
-- **JavaScript Superset:** [TypeScript](https://www.typescriptlang.org/)
-- **Styling:** [Tailwind CSS](https://tailwindcss.com/)
-- **Charting:** [Recharts](https://recharts.org/)
-- **Icons:** [Lucide React](https://lucide.dev/)
-- **API Communication:** [Axios](https://axios-http.com/)
+  - Metrics summary (spend, ESG, diversity, CO₂)
+  - Supplier risk assessments
+  - ESG scorecards
+  - Spend distribution breakdown
+  - Monthly CO₂ trends
+  - Strategic insights for decision makers
 
-### Backend
+### 📈 Interactive Dashboard
 
-- **Runtime:** [Node.js](https://nodejs.org/)
-- **Framework:** [Express.js](https://expressjs.com/)
-- **Database:** [MongoDB](https://www.mongodb.com/) (with Mongoose)
-- **AI Integration:** LLM (e.g., OpenAI API).
-- **Bcrypt**
-- **CORS**
-- **JWT**
+A dynamic analytics interface that gives procurement teams real-time visibility into supplier insights.
 
-## 📂 Project Structure
+- **At-a-Glance Metrics**
 
-The project follows a standard monorepo structure, separating the frontend and backend concerns.
+  - Average ESG Score
+  - CO₂ footprint
+  - Supplier diversity percentages
+  - Total evaluated suppliers
+  - Risk level summaries
+
+- **Rich Data Visualizations (Recharts)**
+
+  - Line Charts: CO₂ emissions over time
+  - Bar Charts: Spend categories
+  - Pie Charts: Diversity distribution
+  - Radar Charts: ESG performance
+  - Stacked Charts: Supplier comparison metrics
+
+- **Supplier Table**
+
+  - Sortable and filterable
+  - Supplier risk badges
+  - Sustainability and performance scores
+  - Progress bars for quick comparison
+
+### 🌿 Comprehensive ESG & Risk Analysis
+
+The AI engine evaluates each supplier and generates:
+
+- **Risk Scores:** Quantifies supply chain vulnerabilities
+
+- **Sustainability Scores:** Environmental and social impact ratings
+
+- **ESG Breakdown:**
+
+  - **Environmental:** Emissions, waste, energy usage
+
+  - **Social:** Worker safety, diversity, ethics
+
+  - **Governance:** Compliance, transparency, anti-corruption
+
+These insights allow organizations to make greener, safer, and more informed procurement decisions.
+
+### 📊 Industry Benchmarking
+
+Suppliers are compared against:
+
+- Industry averages
+
+- Regional performance standards
+
+- Typical sector ESG benchmarks
+
+This helps organizations identify:
+
+- Top performers
+- Underperformers
+- Strategic risk zones
+- Opportunities for improvement
+
+### 💡 Actionable AI Insights
+
+The AI provides:
+
+- Recommendations for risk mitigation
+
+- Sustainability improvements
+
+- Alternative supplier suggestions
+
+- Opportunities for cost optimization
+
+- Alerts on high-risk categories
+
+These insights turn raw procurement data into a powerful decision-making tool.
+
+### 📦 Export Options
+
+- PDF report generation
+
+- JSON export for audit teams or BI tools
+
+- Downloadable analytics snapshots
+
+## ⚙️ Tech Stack
+
+### Frontend:
+
+- **React** - Component-based UI library
+- **TypeScript** - Type-safe JavaScript superset
+- **TailwindCSS v4** - Utility-first CSS framework
+- **Lucide React** - Modern icon library
+- **React Router** - Client-side routing
+- **Framer Motion** - Animation library for React
+- **GSAP** - High-performance animation engine
+- **React Hook Form** - Form validation and handling
+- **React Icons** - Icon component library
+- **AOS (Animate on Scroll)** - Scroll-triggered animations
+- **Recharts** - Composable charting library
+- **Date FNS** - Modern date utility library
+
+### Server:
+
+- **Node.js** - JavaScript runtime environment
+- **Express** - Web application framework
+- **MongoDB** - NoSQL database
+- **Axios** - HTTP client for API requests
+- **Mongoose** - MongoDB object modeling
+- **Cors** - Cross-origin resource sharing
+- **Bcrypt** - Password hashing
+- **JWT (JSON Web Token)** - Secure authentication
+- **Dotenv** - Environment variable management
+- **Nodemon** - Auto-restart development server
+
+### AI
+
+- **Hugging Face Router API** - AI model inference gateway
+
+- **Model**: `openai/gpt-oss-120b:together` - Open-source language model
+
+- **Structured JSON prompt engineering** - Controlled AI response formatting
+
+## 🔗 Demo
+
+**[Live Demo](https://proqure.vercel.app)** - Explore the full application in action
+
+**[Pitch Deck](https://www.canva.com/design/DAG5Dze8RTY/zZh23Fn-eCK8Ng0ZSWRQAQ/edit?utm_content=DAG5Dze8RTY&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)** - View the project presentation and overview
+
+## 📁 Project Structure
 
 ```
-/
+Procure/
 ├── backend/
-│   ├── config/    # Handles API logic (e.g., aiController.js)
-│   ├── controllers/         # Mongoose schemas
-│   ├── middleware/         # API route definitions
-│   └── models/
-├── frontend/
-│   ├── public/
-│   └── src/
-│       ├── components/ # Reusable React components (Banner, etc.)
-│       ├── pages/      # Main page components (Dashboard.tsx, BotEngine.tsx)
-│       ├── services/   # API communication layer (api.ts)
-│       ├── App.tsx
-│       └── index.tsx
-└── README.md
+│   ├── config/          # Database and environment configuration
+│   ├── controllers/     # Request handlers and business logic
+│   ├── models/          # MongoDB schemas and data models
+│   ├── routes/          # API endpoint definitions
+│   └── server.js        # Express server entry point
+│
+└── frontend/
+    ├── public/          # Static assets and index.html
+    └── src/
+        ├── animations/  # Animation configurations and utilities
+        ├── assets/      # Images, fonts, and media files
+        ├── components/  # Reusable React components
+        ├── context/     # React Context API providers
+        ├── pages/       # Route-level page components
+        ├── services/    # API calls and external integrations
+        └── utils/       # Helper functions and utilities
 ```
 
-## ⚙️ Getting Started
+## 📡 API Reference
 
-To get a local copy up and running, follow these simple steps.
+### Base URL
+
+```
+http://localhost:5000/api
+```
+
+---
+
+### Authentication
+
+#### Register User
+
+```http
+POST /api/auth/signup
+```
+
+| Body Field | Type     | Description                      |
+| :--------- | :------- | :------------------------------- |
+| `email`    | `string` | **Required**. User email address |
+| `password` | `string` | **Required**. User password      |
+| `name`     | `string` | **Required**. User full name     |
+
+#### Login User
+
+```http
+POST /api/auth/login
+```
+
+| Body Field | Type     | Description                      |
+| :--------- | :------- | :------------------------------- |
+| `email`    | `string` | **Required**. User email address |
+| `password` | `string` | **Required**. User password      |
+
+**Returns:** JWT token for authenticated requests
+
+---
+
+### AI Analysis
+
+#### Analyze Supplier
+
+```http
+POST /api/ai/analyze
+```
+
+| Header          | Type     | Description                  |
+| :-------------- | :------- | :--------------------------- |
+| `Authorization` | `string` | **Required**. Bearer {token} |
+
+| Body Field | Type     | Description                            |
+| :--------- | :------- | :------------------------------------- |
+| `supplier` | `object` | **Required**. Supplier data to analyze |
+
+**Returns:** AI-generated supplier analysis and insights
+
+---
+
+### Reports
+
+#### Get All Reports
+
+```http
+GET /api/reports
+```
+
+| Header          | Type     | Description                  |
+| :-------------- | :------- | :--------------------------- |
+| `Authorization` | `string` | **Required**. Bearer {token} |
+
+**Returns:** Array of all procurement reports
+
+#### Get Report by ID
+
+```http
+GET /api/reports/${id}
+```
+
+| Header          | Type     | Description                  |
+| :-------------- | :------- | :--------------------------- |
+| `Authorization` | `string` | **Required**. Bearer {token} |
+
+| Parameter | Type     | Description                      |
+| :-------- | :------- | :------------------------------- |
+| `id`      | `string` | **Required**. Report ID to fetch |
+
+**Returns:** Detailed report data for specified ID
+
+#### Get Suppliers List
+
+```http
+GET /api/reports/suppliers/list
+```
+
+| Header          | Type     | Description                  |
+| :-------------- | :------- | :--------------------------- |
+| `Authorization` | `string` | **Required**. Bearer {token} |
+
+**Returns:** List of all registered suppliers
+
+---
+
+### Authentication Flow
+
+All protected routes require a valid JWT token in the Authorization header:
+
+```
+Authorization: Bearer <your_jwt_token>
+```
+
+## 🛠️ Installation
 
 ### Prerequisites
 
-- Node.js and npm (or yarn)
-- MongoDB instance (local or cloud-based like MongoDB Atlas)
-- An API key from an AI provider (like OpenAI) if you intend to use the AI analysis feature.
+- Node.js (v14 or higher)
+- npm or yarn
+- MongoDB (local or Atlas connection)
 
-### Installation & Setup
+### 1️⃣ Clone the Repository
 
-1.  **Clone the repository:**
+```bash
+git clone https://github.com/yourusername/proqure.git
+cd proqure
+```
 
-    ```sh
-    git clone https://github.com/your-username/proqure.git
-    cd proqure
-    ```
+### 2️⃣ Backend Setup
 
-2.  **Install Backend Dependencies:**
+```bash
+cd backend
+npm install
+```
 
-    ```sh
-    cd backend
-    npm install
-    ```
+Create a `.env` file in the backend directory:
 
-3.  **Configure Backend Environment:**
-    Create a `.env` file in the `backend` directory and add your configuration:
+```env
+MONGODB_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret_key
+HUGGINGFACE_API_KEY=your_huggingface_api_key
+PORT=5000
+```
 
-    ```env
-    MONGO_URI=your_mongodb_connection_string
-    PORT=5000
-    OPENAI_API_KEY=your_ai_api_key # Or other AI provider key
-    ```
+Start the backend server:
 
-4.  **Install Frontend Dependencies:**
+```bash
+npm run dev
+# or
+npm start
+```
 
-    ```sh
-    cd ../frontend
-    npm install
-    ```
+### 3️⃣ Frontend Setup
 
-5.  **Run the Application:**
-    - In one terminal, start the backend server:
-      ```sh
-      cd backend && npm start
-      ```
-    - In another terminal, start the frontend development server:
-      ```sh
-      cd frontend && npm run dev
-      ```
+```bash
+cd ../frontend
+npm install
+```
 
-The application should now be running on `http://localhost:3000` (or your configured port).
+Create a `.env` file in the frontend directory:
+
+```env
+VITE_API_URL=http://localhost:5000/api
+```
+
+Start the development server:
+
+```bash
+npm run dev
+```
+
+### 4️⃣ Access the Application
+
+- **Frontend**: http://localhost:5173
+- **Backend API**: http://localhost:5000
+
+## 🔐 Environment Variables
+
+### Backend `.env`
+
+```env
+MONGODB_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret_key
+HF_TOKEN=your_huggingface_api_token
+PORT=5000
+NODE_ENV=development
+```
+
+### Frontend `.env`
+
+```env
+VITE_API_URL=http://localhost:5000/api
+```
+
+**Note:** Replace placeholder values with your actual credentials. Never commit `.env` files to version control.
+
+## 🤝 Contributing
+
+Contributions are always welcome!
+
+We encourage you to:
+
+- 🐛 Report bugs and issues
+- 💡 Suggest new features or improvements
+- 🔧 Submit pull requests
+
+### Getting Started
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+Please adhere to this project's code of conduct and ensure all tests pass before submitting.
+
+## 📄 License
+
+This project is licensed under the [MIT License](LICENSE) - see the LICENSE file for details.
+
+## 👨‍💻 Author
+
+**Kelvin Juma**
+
+- GitHub: [talesofcarter](https://github.com/talesofcarter)
+- Project Link: [ProQure](https://github.com/talesofcarter/proqure)
 
 6. **Screenshots**
 
