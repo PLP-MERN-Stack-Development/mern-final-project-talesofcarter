@@ -405,26 +405,26 @@ This project is licensed under the [MIT License](LICENSE) - see the LICENSE file
 - GitHub: [talesofcarter](https://github.com/talesofcarter)
 - Project Link: [ProQure](https://github.com/talesofcarter/proqure)
 
-6. **Screenshots**
+## Screenshots
 
-## Landing Page
+### Landing Page
 
 ![Landing Page A](./screenshots/landing-page-1.png)
 
 ![Landing Page B](./screenshots/landing-page-2.png)
 
-## AI Advisor
+### AI Advisor
 
 ![AI Advisor](./screenshots/ai.png)
 
-## Dashboard
+### Dashboard
 
 ![Landing Page B](./screenshots/dashboard.png)
 
-## Report
+### Report
 
 ![Landing Page B](./screenshots/eval.png)
 
-## Suppliers
+### Suppliers
 
 ![Landing Page B](./screenshots/suppliers.png)
